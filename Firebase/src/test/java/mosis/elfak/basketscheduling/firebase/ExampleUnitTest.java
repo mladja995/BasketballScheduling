@@ -9,16 +9,16 @@ import static org.junit.Assert.*;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class ExampleUnitTest {
+public class ExampleUnitTest{
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
 
-    @Test
+    /*@Test
     public void createUser(){
         String email = "mladen.mladenovic95@yahoo.com";
         String password = "mladen1995";
         FirebaseServices.getInstance().firebaseAuthClient.createUserWithEmailAndPassword(email, password);
-    }
+    }*/
 }

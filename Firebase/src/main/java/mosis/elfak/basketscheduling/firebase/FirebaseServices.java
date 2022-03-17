@@ -1,10 +1,15 @@
 package mosis.elfak.basketscheduling.firebase;
 
+import android.content.Context;
+
+import com.google.firebase.FirebaseApp;
+
 public class FirebaseServices {
 
     public FirebaseAuthClient firebaseAuthClient;
     public FirebaseRealtimeDatabaseClient firebaseRealtimeDatabaseClient;
     public FirebaseStorageClient firebaseStorageClient;
+    private static FirebaseApp firebaseApp;
 
     private FirebaseServices(){
         firebaseAuthClient = FirebaseAuthClient.getInstance();
@@ -16,8 +21,12 @@ public class FirebaseServices {
         public static final FirebaseServices instance = new FirebaseServices();
     }
 
-    public static FirebaseServices getInstance() {
+    public static FirebaseServices getInstance(Context context) {
+        if (firebaseApp == null){
+            firebaseApp = FirebaseApp.initializeApp(context);
+        }
         return FirebaseServices.SingletonHolder.instance;
     }
+
 
 }

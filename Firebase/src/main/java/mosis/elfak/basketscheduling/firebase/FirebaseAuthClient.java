@@ -10,25 +10,19 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.concurrent.Executor;
+import java.util.HashMap;
 
-class FirebaseAuthClient {
+public class FirebaseAuthClient {
 
     private static final String TAG = "FirebaseAuthClient";
-    private boolean ret = false;
-    public FirebaseAuth mAuth;
-    public FirebaseUser authUser;
+    private FirebaseAuth mAuth;
+    private HashMap<String, UserEventListener> userCreatedEventListeners;
+    FirebaseUser authUser;
 
 
     private FirebaseAuthClient(){
-        try
-        {
-            mAuth = FirebaseAuth.getInstance();
-        }
-        catch (Exception e)
-        {
-            Log.e(TAG, e.getMessage());
-        }
+        mAuth = FirebaseAuth.getInstance();
+        userCreatedEventListeners = new HashMap<String, UserEventListener>();
     }
 
     private static class SingletonHolder{
@@ -39,26 +33,86 @@ class FirebaseAuthClient {
         return SingletonHolder.instance;
     }
 
-    public boolean createUserWithEmailAndPassword(String email, String password){
+    public interface UserEventListener {
+        void onUserSignUpSuccess();
+        void onUserSignUpFailure();
+        void onUserSignInSuccess();
+        void onUserSignInFailure();
+        String getInvokerName();
+    }
+
+    public void setEventListener(UserEventListener listener){
+        UserEventListener _listener = getListener(listener.getInvokerName());
+        if (_listener == null) {
+            userCreatedEventListeners.put(listener.getInvokerName(), listener);
+        }
+    }
+
+    private UserEventListener getListener(String key){
+        if (userCreatedEventListeners.containsKey(key)){
+            return userCreatedEventListeners.get(key);
+        }else{
+            return null;
+        }
+    }
+
+    public FirebaseAuthClient createUserWithEmailAndPassword(String email, String password, String invokerName){
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             authUser = mAuth.getCurrentUser();
-                            ret = true;
+                            UserEventListener listener = getListener(invokerName);
+                            if (listener != null){
+                                userCreatedEventListeners.get(invokerName).onUserSignUpSuccess();
+                            }
                         }
                         else
                         {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            ret = false;
+                            Log.e(TAG, "createUserWithEmail:failure", task.getException());
+                            UserEventListener listener = getListener(invokerName);
+                            if (listener != null){
+                                userCreatedEventListeners.get(invokerName).onUserSignInFailure();
+                            }
                         }
                     }
                 });
 
-        return ret;
+        return SingletonHolder.instance;
+    }
+
+    public FirebaseAuthClient signInWithEmailAndPassword(String email, String password, String invokerName){
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "signInWithEmail:success");
+                            authUser = mAuth.getCurrentUser();
+                            UserEventListener listener = getListener(invokerName);
+                            if (listener != null){
+                                userCreatedEventListeners.get(invokerName).onUserSignInSuccess();
+                            }
+                        }
+                        else
+                        {
+                            Log.e(TAG, "signInWithEmail:failure", task.getException());
+                            UserEventListener listener = getListener(invokerName);
+                            if (listener != null){
+                                userCreatedEventListeners.get(invokerName).onUserSignUpFailure();
+                            }
+                        }
+                    }
+                });
+
+        return SingletonHolder.instance;
+    }
+
+    public void signOut(){
+        mAuth.signOut();
+        userCreatedEventListeners.clear();
+        authUser = null;
     }
 }
