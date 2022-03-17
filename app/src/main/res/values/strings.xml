@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Basket Scheduling</string>
+    <string name="app_name">Basketball Scheduler</string>
+    <string name="text_login">Login</string>
+    <string name="edit_text_email_hint">Your email address</string>
+    <string name="edit_text_password_hint">Password</string>
+    <string name="text_register">Still don\'t have account? Click here to create one</string>
 </resources>

@@ -131,4 +131,12 @@ public class FirebaseAuthClient {
             return null;
         }
     }
+
+    public boolean isUserLoggedIn(){
+        if (authUser != null){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
