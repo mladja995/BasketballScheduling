@@ -115,4 +115,20 @@ public class FirebaseAuthClient {
         userCreatedEventListeners.clear();
         authUser = null;
     }
+
+    public String getAutheticatedUserId(){
+        if (authUser != null){
+            return authUser.getUid();
+        }else{
+            return null;
+        }
+    }
+
+    public String getAutheticatedUserEmail(){
+        if (authUser != null){
+            return authUser.getEmail();
+        }else{
+            return null;
+        }
+    }
 }
