@@ -9,6 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Contracts" />
             <option value="$PROJECT_DIR$/Firebase" />
             <option value="$PROJECT_DIR$/app" />
           </set>

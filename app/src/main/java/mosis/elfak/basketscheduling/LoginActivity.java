@@ -8,19 +8,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import java.util.concurrent.ExecutionException;
 
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 
-public class LoginActivity extends AppCompatActivity implements FirebaseAuthClient.UserEventListener{
+public class LoginActivity extends AppCompatActivity implements FirebaseAuthClient.UserAuthenticationEventListener {
 
     private static final String TAG = "LoginActivity";
     private FirebaseServices _firebaseServices;
     private FirebaseAuthClient _firebaseAuthClient;
     private String email;
     private String password;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,16 +103,40 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
     }
 
     public void login_btn_onClick(View view){
-        if (validateUserInput()) {
-            _firebaseAuthClient
-                    .signInWithEmailAndPassword(email, password, LoginActivity.class.getName())
-                    .setEventListener(LoginActivity.this);
+        try
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            if (validateUserInput()) {
+                _firebaseAuthClient
+                        .signInWithEmailAndPassword(email, password, LoginActivity.class.getName())
+                        .setEventListener(LoginActivity.this);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+            progressBar.setVisibility(View.GONE);
+        }
+
+    }
+
+    public void register_text_onClick(View view){
+        try
+        {
+            Intent i = new Intent(this, RegisterActivity.class);
+            startActivity(i);
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
         }
     }
 
     private void initialize(){
         _firebaseServices = FirebaseServices.getInstance(LoginActivity.this);
         _firebaseAuthClient = _firebaseServices.firebaseAuthClient;
+        progressBar = findViewById(R.id.progressBar_login);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private boolean validateUserInput(){
@@ -123,6 +147,7 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
 
         if (email.isEmpty() || password.isEmpty()){
             Toast.makeText(LoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
             return false;
         }else{
             return true;

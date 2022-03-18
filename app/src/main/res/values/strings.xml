@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">Basketball Scheduler</string>
     <string name="text_login">Login</string>
+    <string name="text_register_btn">Register</string>
     <string name="edit_text_email_hint">Your email address</string>
     <string name="edit_text_password_hint">Password</string>
+    <string name="edit_text_username_hint">Username</string>
+    <string name="edit_text_firstname_hint">First name</string>
+    <string name="edit_text_lastname_hint">Last name</string>
+    <string name="edit_text_phone_hint">Phone</string>
     <string name="text_register">Still don\'t have account? Click here to create one</string>
 </resources>

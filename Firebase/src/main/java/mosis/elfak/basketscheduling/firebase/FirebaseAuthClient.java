@@ -16,13 +16,13 @@ public class FirebaseAuthClient {
 
     private static final String TAG = "FirebaseAuthClient";
     private FirebaseAuth mAuth;
-    private HashMap<String, UserEventListener> userCreatedEventListeners;
+    private HashMap<String, UserAuthenticationEventListener> userAuthenticationEventListeners;
     FirebaseUser authUser;
 
 
     private FirebaseAuthClient(){
         mAuth = FirebaseAuth.getInstance();
-        userCreatedEventListeners = new HashMap<String, UserEventListener>();
+        userAuthenticationEventListeners = new HashMap<String, UserAuthenticationEventListener>();
     }
 
     private static class SingletonHolder{
@@ -33,7 +33,7 @@ public class FirebaseAuthClient {
         return SingletonHolder.instance;
     }
 
-    public interface UserEventListener {
+    public interface UserAuthenticationEventListener {
         void onUserSignUpSuccess();
         void onUserSignUpFailure();
         void onUserSignInSuccess();
@@ -41,16 +41,16 @@ public class FirebaseAuthClient {
         String getInvokerName();
     }
 
-    public void setEventListener(UserEventListener listener){
-        UserEventListener _listener = getListener(listener.getInvokerName());
+    public void setEventListener(UserAuthenticationEventListener listener){
+        UserAuthenticationEventListener _listener = getListener(listener.getInvokerName());
         if (_listener == null) {
-            userCreatedEventListeners.put(listener.getInvokerName(), listener);
+            userAuthenticationEventListeners.put(listener.getInvokerName(), listener);
         }
     }
 
-    private UserEventListener getListener(String key){
-        if (userCreatedEventListeners.containsKey(key)){
-            return userCreatedEventListeners.get(key);
+    private UserAuthenticationEventListener getListener(String key){
+        if (userAuthenticationEventListeners.containsKey(key)){
+            return userAuthenticationEventListeners.get(key);
         }else{
             return null;
         }
@@ -64,17 +64,17 @@ public class FirebaseAuthClient {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "createUserWithEmail:success");
                             authUser = mAuth.getCurrentUser();
-                            UserEventListener listener = getListener(invokerName);
+                            UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
-                                userCreatedEventListeners.get(invokerName).onUserSignUpSuccess();
+                                userAuthenticationEventListeners.get(invokerName).onUserSignUpSuccess();
                             }
                         }
                         else
                         {
                             Log.e(TAG, "createUserWithEmail:failure", task.getException());
-                            UserEventListener listener = getListener(invokerName);
+                            UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
-                                userCreatedEventListeners.get(invokerName).onUserSignInFailure();
+                                userAuthenticationEventListeners.get(invokerName).onUserSignUpFailure();
                             }
                         }
                     }
@@ -91,17 +91,17 @@ public class FirebaseAuthClient {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
                             authUser = mAuth.getCurrentUser();
-                            UserEventListener listener = getListener(invokerName);
+                            UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
-                                userCreatedEventListeners.get(invokerName).onUserSignInSuccess();
+                                userAuthenticationEventListeners.get(invokerName).onUserSignInSuccess();
                             }
                         }
                         else
                         {
                             Log.e(TAG, "signInWithEmail:failure", task.getException());
-                            UserEventListener listener = getListener(invokerName);
+                            UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
-                                userCreatedEventListeners.get(invokerName).onUserSignUpFailure();
+                                userAuthenticationEventListeners.get(invokerName).onUserSignInFailure();
                             }
                         }
                     }
@@ -112,7 +112,7 @@ public class FirebaseAuthClient {
 
     public void signOut(){
         mAuth.signOut();
-        userCreatedEventListeners.clear();
+        userAuthenticationEventListeners.clear();
         authUser = null;
     }
 
