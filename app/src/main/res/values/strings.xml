@@ -9,4 +9,9 @@
     <string name="edit_text_lastname_hint">Last name</string>
     <string name="edit_text_phone_hint">Phone</string>
     <string name="text_register">Still don\'t have account? Click here to create one</string>
+    <string name="action_show_map">Show map</string>
+    <string name="action_profile">Profile</string>
+    <string name="label_main_activity">Your Events</string>
+    <string name="action_create_event">Create event</string>
+    <string name="title_activity_maps">Maps</string>
 </resources>

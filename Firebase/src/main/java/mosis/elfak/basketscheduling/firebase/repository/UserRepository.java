@@ -88,7 +88,7 @@ public class UserRepository {
 
     public void addNewUser(User user, String invokerName){
         if (currentUser == null) {
-            tableRef.child(user.getUserId()).addValueEventListener(new ValueEventListener() {
+            tableRef.child(user.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     currentUser = snapshot.getValue(User.class);
@@ -109,6 +109,12 @@ public class UserRepository {
             });
             tableRef.child(user.getUserId()).setValue(user);
         }
+    }
+
+    public void setLocationForCurrentUser(String latitude, String longitude){
+        currentUser.setLatitude(latitude);
+        currentUser.setLongitude(longitude);
+        tableRef.child(currentUser.getUserId()).setValue(currentUser);
     }
 
     public void setCurrentUser(String key){

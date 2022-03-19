@@ -94,10 +94,12 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
         try
         {
             Toast.makeText(LoginActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
         }
         catch (Exception e)
         {
             Log.e(TAG, e.getMessage());
+            progressBar.setVisibility(View.GONE);
         }
     }
 

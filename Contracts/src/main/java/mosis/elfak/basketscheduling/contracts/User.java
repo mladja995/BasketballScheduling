@@ -8,6 +8,8 @@ public class User {
     private String email;
     private String phone;
     private String imageURL;
+    private String latitude;
+    private String longitude;
 
     public User() {
     }
@@ -20,6 +22,8 @@ public class User {
         this.email = email;
         this.phone = phone;
         this.imageURL = imageURL;
+        this.latitude = "";
+        this.longitude = "";
     }
 
     public String getUserId() {
@@ -49,4 +53,13 @@ public class User {
     public String getImageURL() {
         return imageURL;
     }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
 }
