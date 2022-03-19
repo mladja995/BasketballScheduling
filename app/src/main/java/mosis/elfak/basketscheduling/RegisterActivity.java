@@ -1,27 +1,42 @@
 package mosis.elfak.basketscheduling;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 import mosis.elfak.basketscheduling.contracts.User;
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
+import mosis.elfak.basketscheduling.firebase.FirebaseStorageClient;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 
-public class RegisterActivity extends AppCompatActivity implements UserRepository.UserEventListener, FirebaseAuthClient.UserAuthenticationEventListener {
+public class RegisterActivity extends AppCompatActivity implements UserRepository.CurrentUserEventListener, FirebaseAuthClient.UserAuthenticationEventListener, FirebaseStorageClient.ProfileImageEventListener {
 
+    private ActivityResultLauncher<String> activityResultLauncher;
     private static final String TAG = "RegisterActivity";
+    private static final int REQUEST_LOAD_IMAGE = 1;
     private FirebaseServices _firebaseServices;
     private FirebaseAuthClient _firebaseAuthClient;
     private FirebaseRealtimeDatabaseClient _firebaseRealtimeDatabaseClient;
+    private FirebaseStorageClient _firebaseStorageClient;
     private String userId;
     private String email;
     private String password;
@@ -30,7 +45,10 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     private String lastname;
     private String phone;
     private String imageURL;
+    private Uri imageURI;
     private ProgressBar progressBar;
+    private Button registerBtn;
+    private CircleImageView profileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +57,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_register);
             initialize();
+            initializeListeners();
             checkIsUserAlreadyLoggedIn();
         }
         catch (Exception e)
@@ -77,6 +96,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     public void onUserAddedSuccess() {
         try
         {
+            progressBar.setVisibility(View.GONE);
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         }
@@ -87,25 +107,16 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     }
 
     @Override
-    public void onUserChangedSuccess() {
-
-    }
-
-    @Override
-    public void onUserRemovedSuccess() {
-
-    }
-
-    @Override
-    public void onUserActionFailure() {
+    public void onUserAddedFailure() {
         try
         {
             Toast.makeText(RegisterActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            registerBtn.setEnabled(true);
         }
         catch (Exception e)
         {
             Log.e(TAG, e.getMessage());
-            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -114,11 +125,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
         try
         {
             userId = _firebaseAuthClient.getAutheticatedUserId();
-            User user = new User(userId, username, firstname, lastname, email, phone, imageURL);
-            _firebaseRealtimeDatabaseClient
-                    .userRepository
-                    .addNewUser(user)
-                    .setEventListener(RegisterActivity.this);
+            uploadProfileImage();
         }
         catch (Exception e)
         {
@@ -131,11 +138,12 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
         try
         {
             Toast.makeText(RegisterActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            registerBtn.setEnabled(true);
         }
         catch (Exception e)
         {
             Log.e(TAG, e.getMessage());
-            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -150,6 +158,23 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     }
 
     @Override
+    public void onUploadProfileImageSuccess(String imageURL) {
+        this.imageURL = imageURL;
+        User user = new User(userId, username, firstname, lastname, email, phone, this.imageURL);
+        _firebaseRealtimeDatabaseClient
+                .userRepository
+                .setEventListener(RegisterActivity.this)
+                .addNewUser(user, RegisterActivity.class.getName());
+    }
+
+    @Override
+    public void onUploadProfileImageFailure() {
+        Toast.makeText(RegisterActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+        progressBar.setVisibility(View.GONE);
+        registerBtn.setEnabled(true);
+    }
+
+    @Override
     public String getInvokerName() {
         return RegisterActivity.class.getName();
     }
@@ -158,6 +183,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
         try
         {
             progressBar.setVisibility(View.VISIBLE);
+            registerBtn.setEnabled(false);
             if (validateUserInput()) {
                 _firebaseAuthClient
                         .createUserWithEmailAndPassword(email, password, RegisterActivity.class.getName())
@@ -168,20 +194,58 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
         {
             Log.e(TAG, e.getMessage());
             progressBar.setVisibility(View.GONE);
+            registerBtn.setEnabled(true);
         }
 
+    }
+
+    public void profileImage_onClick(View view){
+        activityResultLauncher.launch("image/*");
     }
 
     private void initialize(){
         _firebaseServices = FirebaseServices.getInstance(RegisterActivity.this);
         _firebaseAuthClient = _firebaseServices.firebaseAuthClient;
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
+        _firebaseStorageClient = _firebaseServices.firebaseStorageClient;
         progressBar = findViewById(R.id.progressBar_register);
+        registerBtn = findViewById(R.id.button_register_register);
+        registerBtn.setEnabled(true);
         progressBar.setVisibility(View.INVISIBLE);
+        profileImage = findViewById(R.id.imageView_register_profile_image);
+    }
+
+
+    private void initializeListeners()
+    {
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+            @Override
+            public void onActivityResult(Uri result) {
+                profileImage.setImageURI(result);
+                imageURI = result;
+            }
+        });
+    }
+
+    private void uploadProfileImage() throws FileNotFoundException {
+        try {
+            profileImage.setDrawingCacheEnabled(true);
+            profileImage.buildDrawingCache();
+            Bitmap bitmap = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+
+            _firebaseStorageClient
+                    .uploadProfileImage(userId, data, RegisterActivity.class.getName())
+                    .setEventListener(RegisterActivity.this);
+        }
+        catch (Exception e){
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     private boolean validateUserInput(){
-        // TODO: Add logic for image
         EditText etEmail = findViewById(R.id.editText_register_email);
         EditText etPassword = findViewById(R.id.editText_register_password);
         EditText etUsername = findViewById(R.id.editText_register_username);
@@ -195,9 +259,12 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
         lastname = etLastname.getText().toString();
         phone = etPhone.getText().toString();
 
-        if (email.isEmpty() || password.isEmpty() || username.isEmpty() || firstname.isEmpty() || lastname.isEmpty() || phone.isEmpty()){
+        if (email.isEmpty() || password.isEmpty() || username.isEmpty()
+                || firstname.isEmpty() || lastname.isEmpty() || phone.isEmpty()
+                || imageURI == null){
             Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
+            registerBtn.setEnabled(true);
             return false;
         }else{
             return true;

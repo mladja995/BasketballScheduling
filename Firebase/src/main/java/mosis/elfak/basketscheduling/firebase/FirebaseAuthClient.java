@@ -66,7 +66,7 @@ public class FirebaseAuthClient {
                             authUser = mAuth.getCurrentUser();
                             UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
-                                userAuthenticationEventListeners.get(invokerName).onUserSignUpSuccess();
+                                listener.onUserSignUpSuccess();
                             }
                         }
                         else
@@ -74,7 +74,7 @@ public class FirebaseAuthClient {
                             Log.e(TAG, "createUserWithEmail:failure", task.getException());
                             UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
-                                userAuthenticationEventListeners.get(invokerName).onUserSignUpFailure();
+                                listener.onUserSignUpFailure();
                             }
                         }
                     }
@@ -93,7 +93,7 @@ public class FirebaseAuthClient {
                             authUser = mAuth.getCurrentUser();
                             UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
-                                userAuthenticationEventListeners.get(invokerName).onUserSignInSuccess();
+                                listener.onUserSignInSuccess();
                             }
                         }
                         else
@@ -101,7 +101,7 @@ public class FirebaseAuthClient {
                             Log.e(TAG, "signInWithEmail:failure", task.getException());
                             UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
-                                userAuthenticationEventListeners.get(invokerName).onUserSignInFailure();
+                                listener.onUserSignInFailure();
                             }
                         }
                     }

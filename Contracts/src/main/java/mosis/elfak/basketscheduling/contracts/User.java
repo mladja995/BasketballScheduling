@@ -9,6 +9,9 @@ public class User {
     private String phone;
     private String imageURL;
 
+    public User() {
+    }
+
     public User(String userId, String username, String firstname, String lastname, String email, String phone, String imageURL) {
         this.userId = userId;
         this.username = username;

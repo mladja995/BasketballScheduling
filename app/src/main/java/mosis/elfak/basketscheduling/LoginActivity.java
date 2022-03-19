@@ -1,6 +1,8 @@
 package mosis.elfak.basketscheduling;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 
 import android.content.Intent;
@@ -18,6 +20,7 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
     private static final String TAG = "LoginActivity";
     private FirebaseServices _firebaseServices;
     private FirebaseAuthClient _firebaseAuthClient;
+    private FirebaseRealtimeDatabaseClient _firebaseRealtimeDatabaseClient;
     private String email;
     private String password;
     private ProgressBar progressBar;
@@ -76,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
     public void onUserSignInSuccess() {
         try
         {
+            _firebaseRealtimeDatabaseClient.userRepository.setCurrentUser(_firebaseAuthClient.getAutheticatedUserId());
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         }
@@ -135,6 +139,7 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
     private void initialize(){
         _firebaseServices = FirebaseServices.getInstance(LoginActivity.this);
         _firebaseAuthClient = _firebaseServices.firebaseAuthClient;
+        _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
         progressBar = findViewById(R.id.progressBar_login);
         progressBar.setVisibility(View.INVISIBLE);
     }
