@@ -32,7 +32,8 @@
         <activity
             android:name=".MapsActivity"
             android:exported="false"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
