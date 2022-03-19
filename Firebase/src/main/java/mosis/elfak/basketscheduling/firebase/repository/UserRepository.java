@@ -25,7 +25,7 @@ public class UserRepository {
     private static final String FIREBASE_CHILD = "Users";
     private HashMap<String, CurrentUserEventListener> currentUserEventListeners;
     private HashMap<String, UsersEventListener> usersEventListeners;
-    public User currentUser;
+    private User currentUser;
 
     public UserRepository(DatabaseReference dbRef){
         tableRef = dbRef.child(FIREBASE_CHILD);
@@ -126,5 +126,9 @@ public class UserRepository {
                 }
             });
         }
+    }
+
+    public User getCurrentUser(){
+        return this.currentUser;
     }
 }
