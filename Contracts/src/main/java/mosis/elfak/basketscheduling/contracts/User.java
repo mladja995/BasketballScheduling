@@ -54,6 +54,14 @@ public class User {
         return imageURL;
     }
 
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
     public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
