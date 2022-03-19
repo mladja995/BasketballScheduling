@@ -20,23 +20,32 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.location.LocationListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import mosis.elfak.basketscheduling.contracts.Constants;
+import mosis.elfak.basketscheduling.contracts.User;
 import mosis.elfak.basketscheduling.databinding.ActivityMapsBinding;
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
+import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, UserRepository.UsersEventListener {
 
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private static final String TAG = "MyPlacesMapsActivity";
@@ -46,6 +55,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActivityMapsBinding binding;
     private LatLng currentLocation;
     private LocationListener locationListener;
+    private boolean showUsers = false;
+    private HashMap<Marker, Integer> markerUserIdMap;
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -96,6 +107,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else {
                 mMap.setMyLocationEnabled(true);
                 centerMapOnCurrentLocation();
+                initializeMarkers();
             }
         }
         catch (Exception e)
@@ -108,6 +120,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_maps, menu);
+        if (!showUsers){
+            menu.getItem(1).setTitle("Show users");
+        }else{
+            menu.getItem(1).setTitle("Hide users");
+        }
         return true;
     }
 
@@ -120,6 +137,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (id == R.id.action_create_event){
 
+        }
+        else if (id == R.id.action_show_hide_users)
+        {
+            if (!showUsers){
+                item.setTitle("Hide users");
+                showUsers = true;
+                showUsersOnMap();
+            }else{
+                item.setTitle("Show users");
+                showUsers = false;
+                hideUsersOnMap();
+            }
         }
         else if (id == android.R.id.home)
         {
@@ -151,6 +180,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void initialize(){
         _firebaseServices = FirebaseServices.getInstance(MapsActivity.this);
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
+        _firebaseRealtimeDatabaseClient.userRepository.setEventListenerForUsers(MapsActivity.this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
@@ -167,9 +197,66 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         };
     }
 
+    private void initializeMarkers(){
+        ArrayList<User> users = _firebaseRealtimeDatabaseClient.userRepository.getAllUsers();
+        if (markerUserIdMap != null) {
+            for (Map.Entry<Marker, Integer> entry : markerUserIdMap.entrySet()) {
+                Marker k = entry.getKey();
+                k.remove();
+            }
+        }
+        markerUserIdMap = new HashMap<Marker, Integer>((int)((double)users.size()*1.2));
+        for (int i = 0; i < users.size(); i++)
+        {
+            User user = users.get(i);
+            String lat = user.getLatitude();
+            String lon = user.getLongitude();
+            if (!lat.isEmpty() && !lon.isEmpty()) {
+                LatLng loc = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(loc);
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_basketball_player_30));
+                markerOptions.title(user.getUsername());
+                if (!showUsers) {
+                    markerOptions.visible(false);
+                } else {
+                    markerOptions.visible(true);
+                }
+                if (user.getUserId() != _firebaseRealtimeDatabaseClient.userRepository.getCurrentUser().getUserId()) {
+                    Marker marker = mMap.addMarker(markerOptions);
+                    markerUserIdMap.put(marker, i);
+                }
+            }
+        }
+    }
+
     private void persistLocationForCurrentUser(){
         _firebaseRealtimeDatabaseClient
                 .userRepository
                 .setLocationForCurrentUser(Double.toString(currentLocation.latitude), Double.toString(currentLocation.longitude));
+    }
+
+    @Override
+    public void OnUsersListUpdated() {
+        initializeMarkers();
+    }
+
+    @Override
+    public String getInvokerName() {
+        return MapsActivity.class.getName();
+    }
+
+    private void showUsersOnMap(){
+        for (Map.Entry<Marker, Integer> entry : markerUserIdMap.entrySet()) {
+            Marker k = entry.getKey();
+            k.setVisible(true);
+        }
+    }
+
+    private void hideUsersOnMap(){
+        for (Map.Entry<Marker, Integer> entry : markerUserIdMap.entrySet()) {
+            Marker k = entry.getKey();
+            k.setVisible(false);
+        }
     }
 }

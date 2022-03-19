@@ -13,7 +13,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import mosis.elfak.basketscheduling.contracts.User;
 
@@ -24,15 +26,21 @@ public class UserRepository {
     private static final String FIREBASE_CHILD = "Users";
     private HashMap<String, CurrentUserEventListener> currentUserEventListeners;
     private HashMap<String, UsersEventListener> usersEventListeners;
+    private HashMap<String, Integer> usersKeyIndexMapping;
     private User currentUser;
+    private ArrayList<User> users;
 
     public UserRepository(DatabaseReference dbRef){
         tableRef = dbRef.child(FIREBASE_CHILD);
         currentUserEventListeners = new HashMap<String, CurrentUserEventListener>();
         usersEventListeners = new HashMap<String, UsersEventListener>();
+        users = new ArrayList<User>();
+        usersKeyIndexMapping = new HashMap<String, Integer>();
+        initializeTableListeners();
     }
 
     public interface UsersEventListener {
+        void OnUsersListUpdated();
         String getInvokerName();
     }
 
@@ -42,7 +50,7 @@ public class UserRepository {
         String getInvokerName();
     }
 
-    public UserRepository setEventListener(CurrentUserEventListener listener){
+    public UserRepository setEventListenerForCurrentUser(CurrentUserEventListener listener){
         CurrentUserEventListener _listener = getCurrentUserListener(listener.getInvokerName());
         if (_listener == null) {
             currentUserEventListeners.put(listener.getInvokerName(), listener);
@@ -58,32 +66,108 @@ public class UserRepository {
         }
     }
 
-    ChildEventListener childEventListener = new ChildEventListener() {
-        @Override
-        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+    public UserRepository setEventListenerForUsers(UsersEventListener listener){
+        UsersEventListener _listener = getUsersEventListener(listener.getInvokerName());
+        if (_listener == null) {
+            usersEventListeners.put(listener.getInvokerName(), listener);
         }
+        return this;
+    }
 
-        @Override
-        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+    private UsersEventListener getUsersEventListener(String key){
+        if (usersEventListeners.containsKey(key)){
+            return usersEventListeners.get(key);
+        }else{
+            return null;
         }
+    }
 
-        @Override
-        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
+    private void initializeTableListeners(){
+        tableRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                String userKey = snapshot.getKey();
+                if (!usersKeyIndexMapping.containsKey(userKey)){
+                    User user = snapshot.getValue(User.class);
+                    users.add(user);
+                    usersKeyIndexMapping.put(userKey, users.size()-1);
+                }
+                for (Map.Entry<String, UsersEventListener> entry : usersEventListeners.entrySet()) {
+                    String k = entry.getKey();
+                    UsersEventListener v = entry.getValue();
+                    v.OnUsersListUpdated();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                String userKey = snapshot.getKey();
+                User user = snapshot.getValue(User.class);
+                if (usersKeyIndexMapping.containsKey(userKey)){
+                    int index = usersKeyIndexMapping.get(userKey);
+                    users.set(index, user);
+                }
+                else{
+                    users.add(user);
+                    usersKeyIndexMapping.put(userKey, users.size()-1);
+                }
+                for (Map.Entry<String, UsersEventListener> entry : usersEventListeners.entrySet()) {
+                    String k = entry.getKey();
+                    UsersEventListener v = entry.getValue();
+                    v.OnUsersListUpdated();
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                String userKey = snapshot.getKey();
+                if(usersKeyIndexMapping.containsKey(userKey)){
+                    int index = usersKeyIndexMapping.get(userKey);
+                    users.remove(index);
+                    recreateKeyIndexMapping();
+                    for (Map.Entry<String, UsersEventListener> entry : usersEventListeners.entrySet()) {
+                        String k = entry.getKey();
+                        UsersEventListener v = entry.getValue();
+                        v.OnUsersListUpdated();
+                    }
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, error.getMessage());
+            }
+        });
+
+        tableRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (Map.Entry<String, UsersEventListener> entry : usersEventListeners.entrySet()) {
+                    String k = entry.getKey();
+                    UsersEventListener v = entry.getValue();
+                    v.OnUsersListUpdated();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, error.getMessage());
+            }
+        });
+    }
+
+    private void recreateKeyIndexMapping(){
+        usersKeyIndexMapping.clear();
+        for (int i = 0; i < users.size(); i++){
+            usersKeyIndexMapping.put(users.get(i).getUserId(), i);
         }
-
-        @Override
-        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    };
+    }
 
     public void createNewUser(User user, String invokerName){
         if (currentUser == null) {
@@ -135,5 +219,9 @@ public class UserRepository {
 
     public User getCurrentUser(){
         return this.currentUser;
+    }
+
+    public ArrayList<User> getAllUsers(){
+        return this.users;
     }
 }

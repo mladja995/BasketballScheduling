@@ -163,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
         User user = new User(userId, username, firstname, lastname, email, phone, this.imageURL);
         _firebaseRealtimeDatabaseClient
                 .userRepository
-                .setEventListener(RegisterActivity.this)
+                .setEventListenerForCurrentUser(RegisterActivity.this)
                 .createNewUser(user, RegisterActivity.class.getName());
     }
 

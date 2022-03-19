@@ -14,4 +14,5 @@
     <string name="label_main_activity">Your Events</string>
     <string name="action_create_event">Create event</string>
     <string name="title_activity_maps">Maps</string>
+    <string name="action_show_hide_users">Show users</string>
 </resources>
