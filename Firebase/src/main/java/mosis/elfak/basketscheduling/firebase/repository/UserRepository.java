@@ -14,7 +14,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import mosis.elfak.basketscheduling.contracts.User;
 
@@ -38,8 +37,8 @@ public class UserRepository {
     }
 
     public interface CurrentUserEventListener {
-        void onUserAddedSuccess();
-        void onUserAddedFailure();
+        void onUserCreatedSuccess();
+        void onUserCreatedFailure();
         String getInvokerName();
     }
 
@@ -86,7 +85,7 @@ public class UserRepository {
         }
     };
 
-    public void addNewUser(User user, String invokerName){
+    public void createNewUser(User user, String invokerName){
         if (currentUser == null) {
             tableRef.child(user.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -94,7 +93,7 @@ public class UserRepository {
                     currentUser = snapshot.getValue(User.class);
                     CurrentUserEventListener listener = getCurrentUserListener(invokerName);
                     if (listener != null){
-                        listener.onUserAddedSuccess();
+                        listener.onUserCreatedSuccess();
                     }
                 }
 
@@ -103,7 +102,7 @@ public class UserRepository {
                     Log.e(TAG, error.getMessage());
                     CurrentUserEventListener listener = getCurrentUserListener(invokerName);
                     if (listener != null){
-                        listener.onUserAddedFailure();
+                        listener.onUserCreatedFailure();
                     }
                 }
             });

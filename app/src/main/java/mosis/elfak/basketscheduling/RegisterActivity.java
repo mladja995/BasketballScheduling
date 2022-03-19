@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     }
 
     @Override
-    public void onUserAddedSuccess() {
+    public void onUserCreatedSuccess() {
         try
         {
             progressBar.setVisibility(View.GONE);
@@ -107,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     }
 
     @Override
-    public void onUserAddedFailure() {
+    public void onUserCreatedFailure() {
         try
         {
             Toast.makeText(RegisterActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
@@ -164,7 +164,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
         _firebaseRealtimeDatabaseClient
                 .userRepository
                 .setEventListener(RegisterActivity.this)
-                .addNewUser(user, RegisterActivity.class.getName());
+                .createNewUser(user, RegisterActivity.class.getName());
     }
 
     @Override
@@ -273,7 +273,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
 
     private void checkIsUserAlreadyLoggedIn(){
         if (_firebaseAuthClient.isUserLoggedIn()){
-            onUserAddedSuccess();
+            onUserCreatedSuccess();
         }
     }
 }
