@@ -15,4 +15,7 @@
     <string name="action_create_event">Create event</string>
     <string name="title_activity_maps">Maps</string>
     <string name="action_show_hide_users">Show users</string>
+    <string name="label_rankings_activity">Rankings</string>
+    <string name="action_ranking">Ranking</string>
+    <string name="action_singOut">Sign out</string>
 </resources>

@@ -10,6 +10,7 @@ public class User {
     private String imageURL;
     private String latitude;
     private String longitude;
+    private int points;
 
     public User() {
     }
@@ -24,6 +25,7 @@ public class User {
         this.imageURL = imageURL;
         this.latitude = "";
         this.longitude = "";
+        this.points = 0;
     }
 
     public String getUserId() {
@@ -62,6 +64,8 @@ public class User {
         return longitude;
     }
 
+    public int getPoints() { return points; }
+
     public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
@@ -70,4 +74,12 @@ public class User {
         this.longitude = longitude;
     }
 
+    public void setPoints(int points) {
+        this.points += points;
+    }
+
+    @Override
+    public String toString(){
+        return this.username;
+    }
 }

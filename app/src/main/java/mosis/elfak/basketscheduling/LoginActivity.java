@@ -54,6 +54,19 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
     }
 
     @Override
+    protected void onRestart() {
+        try
+        {
+            super.onRestart();
+            checkIsUserAlreadyLoggedIn();
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
     protected void onResume() {
         try
         {

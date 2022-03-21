@@ -82,7 +82,6 @@ public class UserRepository {
         }
     }
 
-
     private void initializeTableListeners(){
         tableRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -171,6 +170,7 @@ public class UserRepository {
 
     public void createNewUser(User user, String invokerName){
         if (currentUser == null) {
+            user.setPoints(3);
             tableRef.child(user.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -195,9 +195,12 @@ public class UserRepository {
     }
 
     public void setLocationForCurrentUser(String latitude, String longitude){
-        currentUser.setLatitude(latitude);
-        currentUser.setLongitude(longitude);
-        tableRef.child(currentUser.getUserId()).setValue(currentUser);
+        if (currentUser != null)
+        {
+            currentUser.setLatitude(latitude);
+            currentUser.setLongitude(longitude);
+            tableRef.child(currentUser.getUserId()).setValue(currentUser);
+        }
     }
 
     public void setCurrentUser(String key){
@@ -223,5 +226,12 @@ public class UserRepository {
 
     public ArrayList<User> getAllUsers(){
         return this.users;
+    }
+
+    public void addPointsToCurrentUser(int points){
+        if (currentUser != null){
+            currentUser.setPoints(points);
+            tableRef.child(currentUser.getUserId()).setValue(currentUser);
+        }
     }
 }

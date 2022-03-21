@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/light_gray">
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:orientation="horizontal">
+            
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/list_view_item_user_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="8dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/list_view_item_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/black"
+                    android:textSize="25dp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/list_view_item_fullname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="italic"/>
+
+            </LinearLayout>
+            
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/list_view_item_points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/orange"
+            android:fontFamily="sans-serif"
+            android:layout_margin="8dp"
+            android:padding="15dp"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:layout_alignParentRight="true"/>
+        
+    </RelativeLayout>
+</LinearLayout>
