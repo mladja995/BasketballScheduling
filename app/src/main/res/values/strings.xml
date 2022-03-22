@@ -18,4 +18,5 @@
     <string name="label_rankings_activity">Rankings</string>
     <string name="action_ranking">Ranking</string>
     <string name="action_singOut">Sign out</string>
+    <string name="label_create_basketball_event_activity">Create Basketball Event</string>
 </resources>

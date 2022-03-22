@@ -81,31 +81,52 @@ public class RankingsActivity extends AppCompatActivity implements UserRepositor
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_rankings, menu);
-        return true;
+        try
+        {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.menu_rankings, menu);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        try
+        {
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
 
-        if (id == R.id.action_show_map)
-        {
-            Bundle stateBundle = new Bundle();
-            stateBundle.putInt("state", Constants.SHOW_MAP);
-            Intent i = new Intent(this, MapsActivity.class);
-            i.putExtras(stateBundle);
-            startActivity(i);
+            if (id == R.id.action_show_map)
+            {
+                Bundle stateBundle = new Bundle();
+                stateBundle.putInt("state", Constants.SHOW_MAP);
+                Intent i = new Intent(this, MapsActivity.class);
+                i.putExtras(stateBundle);
+                startActivity(i);
+            }
+            if (id == R.id.action_create_event)
+            {
+                Intent i = new Intent(this, CreateBasketballEventActivity.class);
+                startActivity(i);
+            }
+            else if (id == android.R.id.home)
+            {
+                finish();
+            }
+            return super.onOptionsItemSelected(item);
         }
-        else if (id == android.R.id.home)
+        catch (Exception e)
         {
-            finish();
+            Log.e(TAG, e.getMessage());
+            return false;
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private void initialize(){

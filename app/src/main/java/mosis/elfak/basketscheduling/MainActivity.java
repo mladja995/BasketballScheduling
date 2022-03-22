@@ -80,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(this, LoginActivity.class);
                 startActivity(i);
             }
+            else if (id == R.id.action_create_event)
+            {
+                Intent i = new Intent(this, CreateBasketballEventActivity.class);
+                startActivity(i);
+            }
             return super.onOptionsItemSelected(item);
         }
         catch (Exception e)

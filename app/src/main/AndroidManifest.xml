@@ -13,6 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BasketScheduling">
         <activity
+            android:name=".CreateBasketballEventActivity"
+            android:exported="false"
+            android:label="@string/label_create_basketball_event_activity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity
             android:name=".RankingsActivity"
             android:exported="false"
             android:label="@string/label_rankings_activity"

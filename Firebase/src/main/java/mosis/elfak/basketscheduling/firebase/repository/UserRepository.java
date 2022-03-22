@@ -212,8 +212,8 @@ public class UserRepository {
                         Log.e(TAG, "Error getting data", task.getException());
                     }
                     else {
-                        Log.d(TAG, String.valueOf(task.getResult().getValue()));
                         currentUser = task.getResult().getValue(User.class);
+                        Log.d(TAG, "setCurrentUser: success" + " " + currentUser.getUserId() + " " + currentUser.getEmail());
                     }
                 }
             });

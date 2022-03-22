@@ -135,8 +135,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_create_event){
-
+        if (id == R.id.action_create_event)
+        {
+            Intent i = new Intent(this, CreateBasketballEventActivity.class);
+            startActivity(i);
         }
         else if (id == R.id.action_show_hide_users)
         {

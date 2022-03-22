@@ -1,6 +1,7 @@
 package mosis.elfak.basketscheduling.contracts;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class BasketballEvent {
     private String eventId;
@@ -13,6 +14,7 @@ public class BasketballEvent {
     private String locationDescription;
     private String latitude;
     private String longitude;
+    private ArrayList<User> joinedUsers;
 
     public BasketballEvent() {
     }
@@ -26,6 +28,7 @@ public class BasketballEvent {
         this.locationDescription = locationDescription;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.joinedUsers = null;
     }
 
     public String getEventId() {
@@ -106,5 +109,13 @@ public class BasketballEvent {
 
     public void setLongitude(String longitude) {
         this.longitude = longitude;
+    }
+
+    public ArrayList<User> getJoinedUsers() {
+        return joinedUsers;
+    }
+
+    public void setJoinedUsers(ArrayList<User> joinedUsers) {
+        this.joinedUsers = joinedUsers;
     }
 }
