@@ -40,7 +40,7 @@ public class UserRepository {
     }
 
     public interface UsersEventListener {
-        void OnUsersListUpdated();
+        void onUsersListUpdated();
         String getInvokerName();
     }
 
@@ -95,7 +95,7 @@ public class UserRepository {
                 for (Map.Entry<String, UsersEventListener> entry : usersEventListeners.entrySet()) {
                     String k = entry.getKey();
                     UsersEventListener v = entry.getValue();
-                    v.OnUsersListUpdated();
+                    v.onUsersListUpdated();
                 }
             }
 
@@ -114,7 +114,7 @@ public class UserRepository {
                 for (Map.Entry<String, UsersEventListener> entry : usersEventListeners.entrySet()) {
                     String k = entry.getKey();
                     UsersEventListener v = entry.getValue();
-                    v.OnUsersListUpdated();
+                    v.onUsersListUpdated();
                 }
             }
 
@@ -128,7 +128,7 @@ public class UserRepository {
                     for (Map.Entry<String, UsersEventListener> entry : usersEventListeners.entrySet()) {
                         String k = entry.getKey();
                         UsersEventListener v = entry.getValue();
-                        v.OnUsersListUpdated();
+                        v.onUsersListUpdated();
                     }
                 }
             }
@@ -150,7 +150,7 @@ public class UserRepository {
                 for (Map.Entry<String, UsersEventListener> entry : usersEventListeners.entrySet()) {
                     String k = entry.getKey();
                     UsersEventListener v = entry.getValue();
-                    v.OnUsersListUpdated();
+                    v.onUsersListUpdated();
                 }
             }
 

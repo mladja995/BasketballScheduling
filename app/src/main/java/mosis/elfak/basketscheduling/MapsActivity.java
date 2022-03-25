@@ -239,7 +239,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void OnUsersListUpdated() {
+    public void onUsersListUpdated() {
         initializeMarkers();
     }
 

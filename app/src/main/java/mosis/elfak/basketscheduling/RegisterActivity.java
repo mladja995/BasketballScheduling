@@ -28,7 +28,7 @@ import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.FirebaseStorageClient;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 
-public class RegisterActivity extends AppCompatActivity implements UserRepository.CurrentUserEventListener, FirebaseAuthClient.UserAuthenticationEventListener, FirebaseStorageClient.ProfileImageEventListener {
+public class RegisterActivity extends AppCompatActivity implements UserRepository.CurrentUserEventListener, FirebaseAuthClient.UserAuthenticationEventListener, FirebaseStorageClient.ImageEventListener {
 
     private ActivityResultLauncher<String> activityResultLauncher;
     private static final String TAG = "RegisterActivity";
@@ -158,7 +158,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     }
 
     @Override
-    public void onUploadProfileImageSuccess(String imageURL) {
+    public void onUploadImageSuccess(String imageURL) {
         this.imageURL = imageURL;
         User user = new User(userId, username, firstname, lastname, email, phone, this.imageURL);
         _firebaseRealtimeDatabaseClient
@@ -168,7 +168,7 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     }
 
     @Override
-    public void onUploadProfileImageFailure() {
+    public void onUploadImageFailure() {
         Toast.makeText(RegisterActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
         progressBar.setVisibility(View.GONE);
         registerBtn.setEnabled(true);

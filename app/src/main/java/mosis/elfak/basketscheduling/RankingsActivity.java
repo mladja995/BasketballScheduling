@@ -138,7 +138,7 @@ public class RankingsActivity extends AppCompatActivity implements UserRepositor
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void OnUsersListUpdated() {
+    public void onUsersListUpdated() {
         initializeListView();
     }
 

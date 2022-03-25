@@ -1,5 +1,9 @@
 package mosis.elfak.basketscheduling.contracts;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -11,24 +15,31 @@ public class BasketballEvent {
     private String createdBy;
     private int maxNumOfPlayers;
     private int currentNumOfPlayers;
-    private String locationDescription;
+    private String eventDescription;
     private String latitude;
     private String longitude;
-    private ArrayList<User> joinedUsers;
+    private String imageURL;
+    private ArrayList<String> joinedUsers;
 
     public BasketballEvent() {
     }
 
-    public BasketballEvent(LocalDateTime beginsAt, LocalDateTime endsOn, String createdBy, int maxNumOfPlayers, int currentNumOfPlayers, String locationDescription, String latitude, String longitude) {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public BasketballEvent(LocalDateTime beginsAt, LocalDateTime endsOn, String createdBy, int maxNumOfPlayers, int currentNumOfPlayers,
+                           String eventDescription, String latitude, String longitude, String imageURL) {
         this.beginsAt = beginsAt;
         this.endsOn = endsOn;
         this.createdBy = createdBy;
         this.maxNumOfPlayers = maxNumOfPlayers;
         this.currentNumOfPlayers = currentNumOfPlayers;
-        this.locationDescription = locationDescription;
+        this.eventDescription = eventDescription;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.joinedUsers = null;
+        this.imageURL = imageURL;
+        this.joinedUsers = new ArrayList<String>();
+        joinedUsers.add(createdBy);
+        this.createdAt = LocalDateTime.now();
+
     }
 
     public String getEventId() {
@@ -87,12 +98,12 @@ public class BasketballEvent {
         this.currentNumOfPlayers = currentNumOfPlayers;
     }
 
-    public String getLocationDescription() {
-        return locationDescription;
+    public String getEventDescription() {
+        return eventDescription;
     }
 
-    public void setLocationDescription(String locationDescription) {
-        this.locationDescription = locationDescription;
+    public void setEventDescriptionDescription(String locationDescription) {
+        this.eventDescription = locationDescription;
     }
 
     public String getLatitude() {
@@ -111,11 +122,20 @@ public class BasketballEvent {
         this.longitude = longitude;
     }
 
-    public ArrayList<User> getJoinedUsers() {
+    public ArrayList<String> getJoinedUsers() {
         return joinedUsers;
     }
 
-    public void setJoinedUsers(ArrayList<User> joinedUsers) {
+    public void setJoinedUsers(ArrayList<String> joinedUsers) {
         this.joinedUsers = joinedUsers;
     }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
 }

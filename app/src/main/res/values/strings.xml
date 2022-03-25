@@ -19,4 +19,14 @@
     <string name="action_ranking">Ranking</string>
     <string name="action_singOut">Sign out</string>
     <string name="label_create_basketball_event_activity">Create Basketball Event</string>
+    <string name="edit_text_event_description_hint">Enter short description about event</string>
+    <string name="edit_text_begins_at">Event begins at (MM/dd/yyyy HH:mm)</string>
+    <string name="edit_text_ends_on">Event ends on (MM/dd/yyyy HH:mm)</string>
+    <string name="text_set_btn">Set</string>
+    <string name="edit_text_max_num_of_players">Maximum number of players</string>
+    <string name="edit_text_max_current_of_players">Current number of players</string>
+    <string name="text_set_location">Set location</string>
+    <string name="text_use_my_location_btn">Use my location</string>
+    <string name="text_pick_location_from_map_btn">Pick from map</string>
+    <string name="text_create_event">Create event</string>
 </resources>
