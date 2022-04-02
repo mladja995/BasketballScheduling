@@ -5,13 +5,14 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class BasketballEvent {
     private String eventId;
-    private LocalDateTime createdAt;
-    private LocalDateTime beginsAt;
-    private LocalDateTime endsOn;
+    private String createdAt;
+    private String beginsAt;
+    private String endsOn;
     private String createdBy;
     private int maxNumOfPlayers;
     private int currentNumOfPlayers;
@@ -25,7 +26,7 @@ public class BasketballEvent {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public BasketballEvent(LocalDateTime beginsAt, LocalDateTime endsOn, String createdBy, int maxNumOfPlayers, int currentNumOfPlayers,
+    public BasketballEvent(String beginsAt, String endsOn, String createdBy, int maxNumOfPlayers, int currentNumOfPlayers,
                            String eventDescription, String latitude, String longitude, String imageURL) {
         this.beginsAt = beginsAt;
         this.endsOn = endsOn;
@@ -38,7 +39,7 @@ public class BasketballEvent {
         this.imageURL = imageURL;
         this.joinedUsers = new ArrayList<String>();
         joinedUsers.add(createdBy);
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm")).toString();
 
     }
 
@@ -50,27 +51,27 @@ public class BasketballEvent {
         this.eventId = eventId;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getBeginsAt() {
+    public String getBeginsAt() {
         return beginsAt;
     }
 
-    public void setBeginsAt(LocalDateTime beginsAt) {
+    public void setBeginsAt(String beginsAt) {
         this.beginsAt = beginsAt;
     }
 
-    public LocalDateTime getEndsOn() {
+    public String getEndsOn() {
         return endsOn;
     }
 
-    public void setEndsOn(LocalDateTime endsOn) {
+    public void setEndsOn(String endsOn) {
         this.endsOn = endsOn;
     }
 

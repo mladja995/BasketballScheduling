@@ -121,6 +121,11 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
     }
 
     @Override
+    public void onCurrentUserSet() {
+
+    }
+
+    @Override
     public void onUserSignUpSuccess() {
         try
         {
@@ -237,8 +242,8 @@ public class RegisterActivity extends AppCompatActivity implements UserRepositor
             byte[] data = baos.toByteArray();
 
             _firebaseStorageClient
-                    .uploadProfileImage(userId, data, RegisterActivity.class.getName())
-                    .setEventListener(RegisterActivity.this);
+                    .setEventListener(RegisterActivity.this)
+                    .uploadProfileImage(userId, data, RegisterActivity.class.getName());
         }
         catch (Exception e){
             Log.e(TAG, e.getMessage());

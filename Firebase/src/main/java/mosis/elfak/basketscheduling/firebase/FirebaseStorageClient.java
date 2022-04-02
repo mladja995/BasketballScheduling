@@ -47,11 +47,12 @@ public class FirebaseStorageClient {
         String getInvokerName();
     }
 
-    public void setEventListener(ImageEventListener listener){
+    public FirebaseStorageClient setEventListener(ImageEventListener listener){
         ImageEventListener _listener = getListener(listener.getInvokerName());
         if (_listener == null) {
             imageEventListeners.put(listener.getInvokerName(), listener);
         }
+        return this;
     }
 
     private ImageEventListener getListener(String key){
@@ -77,7 +78,7 @@ public class FirebaseStorageClient {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.d(TAG, "uploadImage:success");
+                Log.i(TAG, "uploadImage:success");
             }
         });
 
@@ -124,7 +125,7 @@ public class FirebaseStorageClient {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.d(TAG, "uploadImage:success");
+                Log.i(TAG, "uploadImage:success");
             }
         });
 

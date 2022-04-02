@@ -47,6 +47,7 @@ public class UserRepository {
     public interface CurrentUserEventListener {
         void onUserCreatedSuccess();
         void onUserCreatedFailure();
+        void onCurrentUserSet();
         String getInvokerName();
     }
 
@@ -203,7 +204,7 @@ public class UserRepository {
         }
     }
 
-    public void setCurrentUser(String key){
+    public void setCurrentUser(String key, String invokerName){
         if (currentUser == null) {
             tableRef.child(key).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
@@ -213,10 +214,19 @@ public class UserRepository {
                     }
                     else {
                         currentUser = task.getResult().getValue(User.class);
-                        Log.d(TAG, "setCurrentUser: success" + " " + currentUser.getUserId() + " " + currentUser.getEmail());
+                        Log.i(TAG, "setCurrentUser: success" + " " + currentUser.getUserId() + " " + currentUser.getEmail());
+                        CurrentUserEventListener listener = getCurrentUserListener(invokerName);
+                        if (listener != null){
+                            listener.onCurrentUserSet();
+                        }
                     }
                 }
             });
+        }else{
+            CurrentUserEventListener listener = getCurrentUserListener(invokerName);
+            if (listener != null){
+                listener.onCurrentUserSet();
+            }
         }
     }
 
@@ -233,5 +243,9 @@ public class UserRepository {
             currentUser.setPoints(points);
             tableRef.child(currentUser.getUserId()).setValue(currentUser);
         }
+    }
+
+    public void InvalidateCurrentUser(){
+        currentUser = null;
     }
 }

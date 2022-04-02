@@ -31,14 +31,13 @@ public class BasketballEventRepository {
     private HashMap<String, BasketballEventRepository.UserBasketballEventListener> userBasketballEventListeners;
     private HashMap<String, Integer> basketballEventsKeyIndexMapping;
     private ArrayList<BasketballEvent> basketballEvents;
-    private ArrayList<BasketballEvent> userBasketballEvents;
 
     public BasketballEventRepository(DatabaseReference dbRef){
         tableRef = dbRef.child(FIREBASE_CHILD);
         basketballEventListeners = new HashMap<String, BasketballEventRepository.BasketballEventListener>();
+        userBasketballEventListeners = new HashMap<String, BasketballEventRepository.UserBasketballEventListener>();
         basketballEventsKeyIndexMapping = new HashMap<String, Integer>();
         basketballEvents = new ArrayList<BasketballEvent>();
-        userBasketballEvents = new ArrayList<BasketballEvent>();
         initializeTableListeners();
     }
 
@@ -48,10 +47,8 @@ public class BasketballEventRepository {
     }
 
     public interface UserBasketballEventListener {
-        void onUserBasketballEventsFetchedSuccess(ArrayList<BasketballEvent> userBasketballEvents);
-        void onUserBasketballEventsFetchedFailure(ArrayList<BasketballEvent> userBasketballEvents);
-        void onUserBasketballEventCreatedSuccess(ArrayList<BasketballEvent> userBasketballEvents);
-        void onUserBasketballEventCreatedFailure(ArrayList<BasketballEvent> userBasketballEvents);
+        void onUserBasketballEventCreatedSuccess(BasketballEvent userBasketballEvent);
+        void onUserBasketballEventCreatedFailure();
         String getInvokerName();
     }
 
@@ -177,42 +174,8 @@ public class BasketballEventRepository {
         return this.basketballEvents;
     }
 
-    public void getAllBasketballEventsForUser(String userId, String invokerName){
-        if (userBasketballEvents.size() == 0) {
-            Query _query = tableRef.orderByChild("createdBy").equalTo(userId);
-            _query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    userBasketballEvents.clear();
-                    if (snapshot.exists()){
-                        for (DataSnapshot snapshot1 : snapshot.getChildren()){
-                            BasketballEvent event = snapshot1.getValue(BasketballEvent.class);
-                            userBasketballEvents.add(event);
-                        }
-                    }
-                    BasketballEventRepository.UserBasketballEventListener listener = getUserBasketballEventListener(invokerName);
-                    if (listener != null){
-                        listener.onUserBasketballEventsFetchedSuccess(userBasketballEvents);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e(TAG, error.getMessage());
-                    BasketballEventRepository.UserBasketballEventListener listener = getUserBasketballEventListener(invokerName);
-                    if (listener != null){
-                        listener.onUserBasketballEventsFetchedFailure(userBasketballEvents);
-                    }
-                }
-            });
-        }
-        else
-        {
-            BasketballEventRepository.UserBasketballEventListener listener = getUserBasketballEventListener(invokerName);
-            if (listener != null){
-                listener.onUserBasketballEventsFetchedSuccess(this.userBasketballEvents);
-            }
-        }
+    public BasketballEvent getEvent(int index){
+        return basketballEvents.get(index);
     }
 
     public void createNewBasketballEvent(BasketballEvent event, String invokerName){
@@ -221,10 +184,9 @@ public class BasketballEventRepository {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     BasketballEvent _event = snapshot.getValue(BasketballEvent.class);
-                    userBasketballEvents.add(_event);
                     BasketballEventRepository.UserBasketballEventListener listener = getUserBasketballEventListener(invokerName);
                     if (listener != null){
-                        listener.onUserBasketballEventCreatedSuccess(userBasketballEvents);
+                        listener.onUserBasketballEventCreatedSuccess(_event);
                     }
                 }
 
@@ -233,7 +195,7 @@ public class BasketballEventRepository {
                     Log.e(TAG, error.getMessage());
                     BasketballEventRepository.UserBasketballEventListener listener = getUserBasketballEventListener(invokerName);
                     if (listener != null){
-                        listener.onUserBasketballEventCreatedFailure(userBasketballEvents);
+                        listener.onUserBasketballEventCreatedFailure();
                     }
                 }
             });

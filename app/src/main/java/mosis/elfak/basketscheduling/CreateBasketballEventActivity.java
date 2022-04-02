@@ -5,10 +5,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,18 +26,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.databinding.ActivityCreateBasketballEventBinding;
-import mosis.elfak.basketscheduling.databinding.ActivityMainBinding;
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
@@ -42,13 +50,15 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
         FirebaseStorageClient.ImageEventListener,
         BasketballEventRepository.UserBasketballEventListener{
 
+    private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private static final String TAG = "CreateBasketballEvent";
     private ActivityCreateBasketballEventBinding binding;
     private FirebaseServices _firebaseServices;
     private FirebaseAuthClient _firebaseAuthClient;
     private FirebaseRealtimeDatabaseClient _firebaseRealtimeDatabaseClient;
     private FirebaseStorageClient _firebaseStorageClient;
-    private ActivityResultLauncher<String> activityResultLauncher;
+    private ActivityResultLauncher<String> activityResultLauncherImage;
+    private ActivityResultLauncher<Intent> activityResultLauncherMap;
     private String eventId;
     private String beginsAt;
     private String endsOn;
@@ -64,6 +74,8 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
     private Button useMyLocationBtn;
     private Button pickLocationBtn;
     private ImageView eventImage;
+    private TextView locationHasBeenSet;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +150,52 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
     }
 
     public void eventImage_onClick(View view){
-        activityResultLauncher.launch("image/*");
+        activityResultLauncherImage.launch("image/*");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    public void use_my_location_btn_onClick(View view){
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+                useMyLocationBtn.setEnabled(false);
+                pickLocationBtn.setEnabled(false);
+                createEventBtn.setEnabled(false);
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, this.getMainExecutor(), new Consumer<Location>() {
+                    @Override
+                    public void accept(Location location) {
+                        latitude = Double.toString(location.getLatitude());
+                        longitude = Double.toString(location.getLongitude());
+                        progressBar.setVisibility(View.GONE);
+                        pickLocationBtn.setEnabled(true);
+                        createEventBtn.setEnabled(true);
+                        locationHasBeenSet.setVisibility(View.VISIBLE);
+                        Toast.makeText(CreateBasketballEventActivity.this, "Location has been set!", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "Location has been set: Latitude - " + latitude + ", " + "Longitude - " + longitude);
+                    }
+                });
+            }
+        }
+        catch (Exception e){
+            Log.e(TAG, e.getMessage());
+            progressBar.setVisibility(View.GONE);
+            useMyLocationBtn.setEnabled(true);
+            pickLocationBtn.setEnabled(true);
+            createEventBtn.setEnabled(true);
+            locationHasBeenSet.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void pick_location_btn_onClick(View view){
+        Bundle stateBundle = new Bundle();
+        stateBundle.putInt("state", Constants.SELECT_LOCATION);
+        Intent i = new Intent(this, MapsActivity.class);
+        i.putExtras(stateBundle);
+        activityResultLauncherMap.launch(i);
     }
 
     private void initialize(){
@@ -146,23 +203,49 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
         _firebaseAuthClient = _firebaseServices.firebaseAuthClient;
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
         _firebaseStorageClient = _firebaseServices.firebaseStorageClient;
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         progressBar = findViewById(R.id.progressBar_create_event);
         createEventBtn = findViewById(R.id.button_create_basketball_event_create_event);
+        useMyLocationBtn = findViewById(R.id.button_create_basketball_event_my_location);
+        pickLocationBtn = findViewById(R.id.button_create_basketball_event_pick_location);
         createEventBtn.setEnabled(true);
         progressBar.setVisibility(View.GONE);
         eventImage = findViewById(R.id.imageView_create_basketball_event_image);
+        locationHasBeenSet = findViewById(R.id.textView_create_basketball_event_location_set);
+        locationHasBeenSet.setVisibility(View.INVISIBLE);
     }
 
     private void initializeListeners()
     {
-        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+        activityResultLauncherImage = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
             @Override
             public void onActivityResult(Uri result) {
-                eventImage.setImageURI(result);
-                eventImage.setScaleType(ImageView.ScaleType.FIT_XY);
-                imageURI = result;
+                if (result != null) {
+                    eventImage.setImageURI(result);
+                    eventImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                    imageURI = result;
+                }
             }
         });
+
+        activityResultLauncherMap = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Constants.RESULT_SELECT_LOCATION)
+                    {
+                        try {
+                            latitude = result.getData().getExtras().getString("lat");
+                            longitude = result.getData().getExtras().getString("lon");
+                            locationHasBeenSet.setVisibility(View.VISIBLE);
+                            useMyLocationBtn.setEnabled(true);
+                            Toast.makeText(CreateBasketballEventActivity.this, "Location has been set!", Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "Location has been set: Latitude - " + latitude + ", " + "Longitude - " + longitude);
+                        }
+                        catch (Exception e){
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                });
     }
 
     private void uploadEventImage() throws FileNotFoundException {
@@ -174,8 +257,8 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
         byte[] data = baos.toByteArray();
         eventId = _firebaseRealtimeDatabaseClient.getKey();
         _firebaseStorageClient
-                .uploadEventImage(eventId, data, CreateBasketballEventActivity.class.getName())
-                .setEventListener(CreateBasketballEventActivity.this);
+                .setEventListener(CreateBasketballEventActivity.this)
+                .uploadEventImage(eventId, data, CreateBasketballEventActivity.class.getName());
     }
 
     private boolean validateUserInput(){
@@ -208,8 +291,8 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
         try {
             this.imageURL = imageURL;
             BasketballEvent _event = new BasketballEvent(
-                    LocalDateTime.parse(beginsAt),
-                    LocalDateTime.parse(endsOn),
+                    beginsAt,
+                    endsOn,
                     _firebaseRealtimeDatabaseClient.userRepository.getCurrentUser().getUserId(),
                     Integer.parseInt(maxNumOfPlayer),
                     Integer.parseInt(currentNumOfPlayers),
@@ -218,7 +301,7 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
                     longitude,
                     imageURL
             );
-
+            _event.setEventId(eventId);
             _firebaseRealtimeDatabaseClient
                     .basketballEventRepository
                     .setEventListenerForUserBasketballEvent(CreateBasketballEventActivity.this)
@@ -239,17 +322,7 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUserBasketballEventsFetchedSuccess(ArrayList<BasketballEvent> userBasketballEvents) {
-
-    }
-
-    @Override
-    public void onUserBasketballEventsFetchedFailure(ArrayList<BasketballEvent> userBasketballEvents) {
-
-    }
-
-    @Override
-    public void onUserBasketballEventCreatedSuccess(ArrayList<BasketballEvent> userBasketballEvents) {
+    public void onUserBasketballEventCreatedSuccess(BasketballEvent userBasketballEvent) {
         progressBar.setVisibility(View.GONE);
         createEventBtn.setEnabled(true);
         Toast.makeText(CreateBasketballEventActivity.this, "Basketball event created successfully!", Toast.LENGTH_SHORT).show();
@@ -260,7 +333,7 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUserBasketballEventCreatedFailure(ArrayList<BasketballEvent> userBasketballEvents) {
+    public void onUserBasketballEventCreatedFailure() {
         Toast.makeText(CreateBasketballEventActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
         progressBar.setVisibility(View.GONE);
         createEventBtn.setEnabled(true);

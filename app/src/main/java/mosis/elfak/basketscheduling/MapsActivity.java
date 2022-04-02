@@ -7,6 +7,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -57,6 +59,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationListener locationListener;
     private boolean showUsers = false;
     private HashMap<Marker, Integer> markerUserIdMap;
+    private int state = 0;
+    private boolean selCoorsEnabled = false;
+
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -74,9 +79,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
-
+            processIntent();
             initialize();
-            initializeLocationListener();
+            initializeListeners();
         }
         catch (Exception e)
         {
@@ -99,15 +104,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         try {
-            mMap = googleMap;
+            if (mMap == null){
+                mMap = googleMap;
+            }
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
+                onMapReady(mMap);
             } else {
                 mMap.setMyLocationEnabled(true);
                 centerMapOnCurrentLocation();
-                initializeMarkers();
+                if (state == Constants.SELECT_LOCATION){
+                    setOnMapClickListener();
+                }else {
+                    initializeMarkers();
+                }
             }
         }
         catch (Exception e)
@@ -119,11 +131,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_maps, menu);
-        if (!showUsers){
-            menu.getItem(1).setTitle("Show users");
-        }else{
-            menu.getItem(1).setTitle("Hide users");
+        if (state == Constants.SELECT_LOCATION && !selCoorsEnabled){
+            menu.add(0, 1, 1, "Select Coordinates");
+            menu.add(0, 2, 2, "Cancel");
+
+        }
+        else {
+            getMenuInflater().inflate(R.menu.menu_maps, menu);
+            if (!showUsers) {
+                menu.getItem(1).setTitle("Show users");
+            } else {
+                menu.getItem(1).setTitle("Hide users");
+            }
         }
         return true;
     }
@@ -135,26 +154,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_create_event)
-        {
-            Intent i = new Intent(this, CreateBasketballEventActivity.class);
-            startActivity(i);
-        }
-        else if (id == R.id.action_show_hide_users)
-        {
-            if (!showUsers){
-                item.setTitle("Hide users");
-                showUsers = true;
-                showUsersOnMap();
-            }else{
-                item.setTitle("Show users");
-                showUsers = false;
-                hideUsersOnMap();
+        if (state == Constants.SELECT_LOCATION && !selCoorsEnabled){
+            if (id == 1){
+                selCoorsEnabled = true;
+                Toast.makeText(this, "Select coordinates", Toast.LENGTH_SHORT).show();
+                item.setEnabled(false);
+            }else if (id == 2){
+                setResult(Activity.RESULT_CANCELED);
+                finish();
             }
         }
-        else if (id == android.R.id.home)
-        {
-           finish();
+        else {
+            if (id == R.id.action_create_event) {
+                Intent i = new Intent(this, CreateBasketballEventActivity.class);
+                startActivity(i);
+            } else if (id == R.id.action_show_hide_users) {
+                if (!showUsers) {
+                    item.setTitle("Hide users");
+                    showUsers = true;
+                    showUsersOnMap();
+                } else {
+                    item.setTitle("Show users");
+                    showUsers = false;
+                    hideUsersOnMap();
+                }
+            } else if (id == android.R.id.home) {
+                finish();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -179,6 +205,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void processIntent(){
+        Intent mapIntent = getIntent();
+        Bundle mapBundle = mapIntent.getExtras();
+
+        if (mapBundle != null){
+            state = mapBundle.getInt("state");
+        }
+    }
+
     private void initialize(){
         _firebaseServices = FirebaseServices.getInstance(MapsActivity.this);
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
@@ -186,7 +221,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
-    public void initializeLocationListener(){
+    private void initializeListeners(){
+        initializeLocationListener();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private void initializeLocationListener(){
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
@@ -229,6 +269,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     markerUserIdMap.put(marker, i);
                 }
             }
+        }
+    }
+
+    private void setOnMapClickListener(){
+        if (mMap != null){
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(@NonNull LatLng latLng) {
+                    if (state == Constants.SELECT_LOCATION && selCoorsEnabled)
+                    {
+                        String lat = Double.toString(latLng.latitude);
+                        String lon = Double.toString(latLng.longitude);
+                        Intent locationIntent = new Intent();
+                        locationIntent.putExtra("lat", lat);
+                        locationIntent.putExtra("lon", lon);
+                        setResult(Constants.RESULT_SELECT_LOCATION, locationIntent);
+                        finish();
+                    }
+                }
+            });
         }
     }
 

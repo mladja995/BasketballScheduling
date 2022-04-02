@@ -62,7 +62,7 @@ public class FirebaseAuthClient {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "createUserWithEmail:success" + " " + email);
+                            Log.i(TAG, "createUserWithEmail:success" + " " + email);
                             authUser = mAuth.getCurrentUser();
                             UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){
@@ -89,7 +89,7 @@ public class FirebaseAuthClient {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithEmail:success" + " " + email);
+                            Log.i(TAG, "signInWithEmail:success" + " " + email);
                             authUser = mAuth.getCurrentUser();
                             UserAuthenticationEventListener listener = getListener(invokerName);
                             if (listener != null){

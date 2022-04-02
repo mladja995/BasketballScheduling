@@ -1,11 +1,20 @@
 package mosis.elfak.basketscheduling;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,11 +22,17 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
 
-public class LoginActivity extends AppCompatActivity implements FirebaseAuthClient.UserAuthenticationEventListener {
+import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
+import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
+
+public class LoginActivity extends AppCompatActivity implements
+        FirebaseAuthClient.UserAuthenticationEventListener,
+        UserRepository.CurrentUserEventListener {
 
     private static final String TAG = "LoginActivity";
+    private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private FirebaseServices _firebaseServices;
     private FirebaseAuthClient _firebaseAuthClient;
     private FirebaseRealtimeDatabaseClient _firebaseRealtimeDatabaseClient;
@@ -25,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
     private String password;
     private ProgressBar progressBar;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try
@@ -40,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onStart() {
         try
@@ -53,6 +70,7 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onRestart() {
         try
@@ -66,6 +84,7 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         try
@@ -88,13 +107,15 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onUserSignInSuccess() {
         try
         {
-            _firebaseRealtimeDatabaseClient.userRepository.setCurrentUser(_firebaseAuthClient.getAutheticatedUserId());
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
+            _firebaseRealtimeDatabaseClient
+                    .userRepository
+                    .setEventListenerForCurrentUser(this)
+                    .setCurrentUser(_firebaseAuthClient.getAutheticatedUserId(), LoginActivity.class.getName());
         }
         catch (Exception e)
         {
@@ -114,6 +135,22 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
             Log.e(TAG, e.getMessage());
             progressBar.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onUserCreatedSuccess() {
+
+    }
+
+    @Override
+    public void onUserCreatedFailure() {
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onCurrentUserSet() {
+        requestPermissionForLocationTracking();
     }
 
     @Override
@@ -174,9 +211,62 @@ public class LoginActivity extends AppCompatActivity implements FirebaseAuthClie
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void checkIsUserAlreadyLoggedIn(){
         if (_firebaseAuthClient.isUserLoggedIn()){
             onUserSignInSuccess();
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void requestPermissionForLocationTracking(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
+        } else {
+            startLocationService();
+            Intent i = new Intent(this, MainActivity.class);
+            progressBar.setVisibility(View.GONE);
+            startActivity(i);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void startLocationService(){
+        if (!isLocationServiceRunning()) {
+            Intent serviceIntent = new Intent(this, LocationService.class);
+            startForegroundService(serviceIntent);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String perminssions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, perminssions, grantResults);
+
+        switch (requestCode){
+            case PERMISSION_ACCESS_FINE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    startLocationService();
+                    Intent i = new Intent(this, MainActivity.class);
+                    progressBar.setVisibility(View.GONE);
+                    startActivity(i);
+                }else{
+                    _firebaseAuthClient.signOut();
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(LoginActivity.this, "You are signed out! If you want to use application you must grant location tracking!", Toast.LENGTH_SHORT).show();                }
+                return;
+        }
+    }
+
+    private boolean isLocationServiceRunning(){
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service: activityManager.getRunningServices(Integer.MAX_VALUE)){
+            if (LocationService.class.getName().equals(service.service.getClassName())){
+                return true;
+            }
+        }
+        return false;
     }
 }

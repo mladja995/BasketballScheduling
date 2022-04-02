@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -13,10 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BasketScheduling">
         <activity
+            android:name=".ViewBasketballEventActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreateBasketballEventActivity"
             android:exported="false"
             android:label="@string/label_create_basketball_event_activity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".RankingsActivity"
             android:exported="false"
@@ -61,6 +65,8 @@
             android:exported="false"
             android:label="@string/label_main_activity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <service android:name=".LocationService" />
     </application>
 
 </manifest>

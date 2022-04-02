@@ -11,7 +11,7 @@
     <string name="text_register">Still don\'t have account? Click here to create one</string>
     <string name="action_show_map">Show map</string>
     <string name="action_profile">Profile</string>
-    <string name="label_main_activity">Your Events</string>
+    <string name="label_main_activity">Events</string>
     <string name="action_create_event">Create event</string>
     <string name="title_activity_maps">Maps</string>
     <string name="action_show_hide_users">Show users</string>
@@ -29,4 +29,9 @@
     <string name="text_use_my_location_btn">Use my location</string>
     <string name="text_pick_location_from_map_btn">Pick from map</string>
     <string name="text_create_event">Create event</string>
+    <string name="text_location_has_been_set">(Location has been set)</string>
+    <string name="checkbox_main_show_only_your_events">Show only your events</string>
+    <string name="label_begins_at">Begins at:</string>
+    <string name="label_ends_on">Ends on:</string>
+    <string name="label_max_num_of_players">Max num of players:</string>
 </resources>

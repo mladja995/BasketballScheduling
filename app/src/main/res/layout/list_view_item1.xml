@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/light_gray">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/list_view_item_event_image"
+                android:layout_width="100dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/list_view_item_event_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif"
+                android:text="Event description"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/list_view_item_event_image"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/list_view_item_begins_at_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_begins_at"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@+id/list_view_item_event_image"
+                app:layout_constraintTop_toBottomOf="@+id/list_view_item_event_description" />
+
+
+            <TextView
+                android:id="@+id/list_view_item_begins_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif"
+                android:text="Begins at value"
+                android:textColor="@color/orange"
+                android:textSize="12dp"
+                android:textStyle="italic"
+                app:layout_constraintBaseline_toBaselineOf="@+id/list_view_item_begins_at_label"
+                app:layout_constraintStart_toEndOf="@+id/list_view_item_begins_at_label" />
+
+            <TextView
+                android:id="@+id/list_view_item_ends_on_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_ends_on"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@+id/list_view_item_event_image"
+                app:layout_constraintTop_toBottomOf="@+id/list_view_item_begins_at" />
+
+
+            <TextView
+                android:id="@+id/list_view_item_ends_on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif"
+                android:text="Ends on value"
+                android:textColor="@color/orange"
+                android:textSize="12dp"
+                android:textStyle="italic"
+                app:layout_constraintBaseline_toBaselineOf="@+id/list_view_item_ends_on_label"
+                app:layout_constraintStart_toEndOf="@+id/list_view_item_ends_on_label" />
+
+            <TextView
+                android:id="@+id/list_view_item_max_num_of_players_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_max_num_of_players"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@+id/list_view_item_event_image"
+                app:layout_constraintTop_toBottomOf="@+id/list_view_item_ends_on" />
+
+
+            <TextView
+                android:id="@+id/list_view_item_max_num_of_players"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif"
+                android:text="Max"
+                android:textColor="@color/orange"
+                android:textSize="12dp"
+                android:textStyle="italic"
+                app:layout_constraintBaseline_toBaselineOf="@+id/list_view_item_max_num_of_players_label"
+                app:layout_constraintStart_toEndOf="@+id/list_view_item_max_num_of_players_label" />
+
+            <TextView
+                android:id="@+id/list_view_item_current_num_of_players"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="3"
+                android:textColor="@color/orange"
+                android:textSize="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+</LinearLayout>

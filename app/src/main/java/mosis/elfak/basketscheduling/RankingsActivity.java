@@ -51,8 +51,7 @@ public class RankingsActivity extends AppCompatActivity implements UserRepositor
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             initialize();
             initializeListView();
-            _firebaseRealtimeDatabaseClient.userRepository.setEventListenerForUsers(this);
-            UserListAdapter.setEventListener(this);
+            InitializeListeners();
         }
         catch (Exception e)
         {
@@ -134,6 +133,11 @@ public class RankingsActivity extends AppCompatActivity implements UserRepositor
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
         progressBar = findViewById(R.id.progressBar_rankings);
         progressBar.setVisibility(View.GONE);
+    }
+
+    private void InitializeListeners(){
+        _firebaseRealtimeDatabaseClient.userRepository.setEventListenerForUsers(this);
+        UserListAdapter.setEventListener(this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
