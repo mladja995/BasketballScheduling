@@ -22,7 +22,7 @@ import java.util.Calendar;
 
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 
-// TODO: Add logic for filtering only user created events
+
 public class EventListAdapter extends ArrayAdapter<BasketballEvent> {
 
     private static final String TAG = "EventListAdapter";

@@ -34,4 +34,9 @@
     <string name="label_begins_at">Begins at:</string>
     <string name="label_ends_on">Ends on:</string>
     <string name="label_max_num_of_players">Max num of players:</string>
+    <string name="label_basketball_event_activity">Basketball Event</string>
+    <string name="label_current_num_of_players">Current num of players:</string>
+    <string name="label_createdOn">Created on:</string>
+    <string name="text_show_on_map">Show on map</string>
+    <string name="text_join_event">Join event</string>
 </resources>

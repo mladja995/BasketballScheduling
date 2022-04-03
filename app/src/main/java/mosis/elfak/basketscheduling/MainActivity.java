@@ -1,5 +1,7 @@
 package mosis.elfak.basketscheduling;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,12 +9,15 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -29,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements
         EventListAdapter.EventsImagesEventListener {
 
     private static final String TAG = "MainActivity";
+    ActivityResultLauncher<Intent> activityResultLauncher;
     private ActivityMainBinding binding;
     private FirebaseServices _firebaseServices;
     private FirebaseAuthClient _firebaseAuthClient;
@@ -133,10 +139,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initialize(){
-        ArrayList<BasketballEvent> events = new ArrayList<BasketballEvent>();
+        events = new ArrayList<BasketballEvent>();
         _firebaseServices = FirebaseServices.getInstance(MainActivity.this);
         _firebaseAuthClient = _firebaseServices.firebaseAuthClient;
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
+        eventsListView = (ListView) findViewById(R.id.main_events_list);
         progressBar = findViewById(R.id.progressBar_main);
         checkBox = findViewById(R.id.checkBox_main_show_only_your_events);
         progressBar.setVisibility(View.GONE);
@@ -148,12 +155,23 @@ public class MainActivity extends AppCompatActivity implements
     {
         try
         {
-            ArrayList<BasketballEvent> _userEvents = new ArrayList<BasketballEvent>();
             events = _firebaseRealtimeDatabaseClient
                     .basketballEventRepository
                     .getAllBasketballEvents();
 
+            if (!checkBox.isChecked()){
+                ArrayList<BasketballEvent> _notUserEvents = new ArrayList<BasketballEvent>();
+                for (int i = 0; i < events.size(); i++){
+                    BasketballEvent _event = _firebaseRealtimeDatabaseClient.basketballEventRepository.getEvent(i);
+                    if (!_firebaseAuthClient.getAutheticatedUserId().equals(_event.getCreatedBy())){
+                        _notUserEvents.add(_event);
+                    }
+                }
+                events = _notUserEvents;
+            }
+
             if (checkBox.isChecked()) {
+                ArrayList<BasketballEvent> _userEvents = new ArrayList<BasketballEvent>();
                 for (int i = 0; i < events.size(); i++){
                     BasketballEvent _event = _firebaseRealtimeDatabaseClient.basketballEventRepository.getEvent(i);
                     if (_firebaseAuthClient.getAutheticatedUserId().equals(_event.getCreatedBy())){
@@ -163,14 +181,13 @@ public class MainActivity extends AppCompatActivity implements
                 events = _userEvents;
             }
 
-
-            eventsListView = (ListView) findViewById(R.id.main_events_list);
             if (events.size() > 1) {
                 eventsListView.setVisibility(View.INVISIBLE);
                 progressBar.setVisibility(View.VISIBLE);
             }
             eventListAdapter = new EventListAdapter(MainActivity.this, events);
             eventsListView.setAdapter(eventListAdapter);
+            InitializeContextMenuListener();
         }
         catch (Exception e)
         {
@@ -181,6 +198,49 @@ public class MainActivity extends AppCompatActivity implements
     private void InitializeListeners(){
         _firebaseRealtimeDatabaseClient.basketballEventRepository.setEventListenerForBasketballEvent(this);
         EventListAdapter.setEventListener(this);
+
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Constants.RESULT_JOIN_EVENT)
+                    {
+                        Toast.makeText(MainActivity.this, "Great! You've just joined to event!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void InitializeContextMenuListener(){
+
+        eventsListView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener(){
+            @Override
+            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo){
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) contextMenuInfo;
+                BasketballEvent _event = events.get(info.position);
+                contextMenu.setHeaderTitle(_event.getEventDescription());
+                contextMenu.add(0, 1, 1, "View event");
+            }
+        });
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        Bundle positionBundle = new Bundle();
+        positionBundle.putString("eventKey", events.get(info.position).getEventId());
+        if (checkBox.isChecked()){
+            positionBundle.putBoolean("isCurrentUserEvent", true);
+        }else{
+            positionBundle.putBoolean("isCurrentUserEvent", false);
+        }
+        Intent i = null;
+
+        if (item.getItemId() == 1){
+            i = new Intent(this, ViewBasketballEventActivity.class);
+            i.putExtras(positionBundle);
+            activityResultLauncher.launch(i);
+        }
+
+        return super.onContextItemSelected(item);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

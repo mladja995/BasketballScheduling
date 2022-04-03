@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.User;
+import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 
 public class BasketballEventRepository {
 
@@ -31,6 +32,7 @@ public class BasketballEventRepository {
     private HashMap<String, BasketballEventRepository.UserBasketballEventListener> userBasketballEventListeners;
     private HashMap<String, Integer> basketballEventsKeyIndexMapping;
     private ArrayList<BasketballEvent> basketballEvents;
+    private ArrayList<BasketballEvent> currentUserBasketballEvents;
 
     public BasketballEventRepository(DatabaseReference dbRef){
         tableRef = dbRef.child(FIREBASE_CHILD);
@@ -38,6 +40,7 @@ public class BasketballEventRepository {
         userBasketballEventListeners = new HashMap<String, BasketballEventRepository.UserBasketballEventListener>();
         basketballEventsKeyIndexMapping = new HashMap<String, Integer>();
         basketballEvents = new ArrayList<BasketballEvent>();
+        currentUserBasketballEvents = new ArrayList<BasketballEvent>();
         initializeTableListeners();
     }
 
@@ -93,6 +96,7 @@ public class BasketballEventRepository {
                     BasketballEvent event = snapshot.getValue(BasketballEvent.class);
                     basketballEvents.add(event);
                     basketballEventsKeyIndexMapping.put(eventKey, basketballEvents.size()-1);
+                    tryToAddEventToCurrentUser(event);
                 }
                 for (Map.Entry<String, BasketballEventRepository.BasketballEventListener> entry : basketballEventListeners.entrySet()) {
                     String k = entry.getKey();
@@ -108,10 +112,12 @@ public class BasketballEventRepository {
                 if (basketballEventsKeyIndexMapping.containsKey(eventKey)){
                     int index = basketballEventsKeyIndexMapping.get(eventKey);
                     basketballEvents.set(index, event);
+                    tryToChangeEventToCurrentUser(event);
                 }
                 else{
                     basketballEvents.add(event);
                     basketballEventsKeyIndexMapping.put(eventKey, basketballEvents.size()-1);
+                    tryToChangeEventToCurrentUser(event);
                 }
                 for (Map.Entry<String, BasketballEventRepository.BasketballEventListener> entry : basketballEventListeners.entrySet()) {
                     String k = entry.getKey();
@@ -125,8 +131,10 @@ public class BasketballEventRepository {
                 String eventKey = snapshot.getKey();
                 if(basketballEventsKeyIndexMapping.containsKey(eventKey)){
                     int index = basketballEventsKeyIndexMapping.get(eventKey);
+                    BasketballEvent event = basketballEvents.get(index);
                     basketballEvents.remove(index);
                     recreateKeyIndexMapping();
+                    tryToRemoveEventToCurrentUser(event);
                     for (Map.Entry<String, BasketballEventRepository.BasketballEventListener> entry : basketballEventListeners.entrySet()) {
                         String k = entry.getKey();
                         BasketballEventRepository.BasketballEventListener v = entry.getValue();
@@ -170,12 +178,49 @@ public class BasketballEventRepository {
         }
     }
 
+    private void tryToAddEventToCurrentUser(BasketballEvent event){
+        if (event.getCreatedBy().equals(FirebaseAuthClient.getInstance().getAutheticatedUserId())){
+            currentUserBasketballEvents.add(event);
+        }
+    }
+
+    private void tryToRemoveEventToCurrentUser(BasketballEvent event){
+        for (int i = 0; i < currentUserBasketballEvents.size(); i++){
+            if (currentUserBasketballEvents.get(i).getEventId().equals(event.getEventId())){
+                currentUserBasketballEvents.remove(i);
+                break;
+            }
+        }
+    }
+
+    private void tryToChangeEventToCurrentUser(BasketballEvent event){
+        for (int i = 0; i < currentUserBasketballEvents.size(); i++){
+            if (currentUserBasketballEvents.get(i).getEventId().equals(event.getEventId())){
+                currentUserBasketballEvents.set(i, event);
+                break;
+            }
+        }
+    }
+
     public ArrayList<BasketballEvent> getAllBasketballEvents(){
         return this.basketballEvents;
     }
 
     public BasketballEvent getEvent(int index){
         return basketballEvents.get(index);
+    }
+
+    public BasketballEvent getEvent(String key){
+        for (int i = 0; i < basketballEvents.size(); i++){
+            if (basketballEvents.get(i).getEventId().equals(key)){
+                return basketballEvents.get(i);
+            }
+        }
+        return null;
+    }
+
+    public BasketballEvent getCurrentUserEvent(int index){
+        return currentUserBasketballEvents.get(index);
     }
 
     public void createNewBasketballEvent(BasketballEvent event, String invokerName){
