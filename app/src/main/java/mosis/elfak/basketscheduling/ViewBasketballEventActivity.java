@@ -183,7 +183,7 @@ public class ViewBasketballEventActivity extends AppCompatActivity {
     }
 
     public void show_on_map_onClick(View view){
-
+        // TODO: Implement
     }
 
     public void join_event_onClick(View view){

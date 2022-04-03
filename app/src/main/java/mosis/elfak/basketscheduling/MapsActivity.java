@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,26 +40,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.contracts.User;
 import mosis.elfak.basketscheduling.databinding.ActivityMapsBinding;
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
+import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, UserRepository.UsersEventListener {
+public class MapsActivity extends AppCompatActivity implements
+        OnMapReadyCallback,
+        UserRepository.UsersEventListener,
+        BasketballEventRepository.BasketballEventListener {
 
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private static final String TAG = "MyPlacesMapsActivity";
     private FirebaseServices _firebaseServices;
     private FirebaseRealtimeDatabaseClient _firebaseRealtimeDatabaseClient;
+    private FirebaseAuthClient _firebaseAuthClient;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     private LatLng currentLocation;
     private LocationListener locationListener;
     private boolean showUsers = false;
     private HashMap<Marker, Integer> markerUserIdMap;
+    private HashMap<Marker, BasketballEvent> markerEventMap;
     private int state = 0;
     private boolean selCoorsEnabled = false;
 
@@ -216,13 +224,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void initialize(){
         _firebaseServices = FirebaseServices.getInstance(MapsActivity.this);
+        _firebaseAuthClient = _firebaseServices.firebaseAuthClient;
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
         _firebaseRealtimeDatabaseClient.userRepository.setEventListenerForUsers(MapsActivity.this);
+        _firebaseRealtimeDatabaseClient.basketballEventRepository.setEventListenerForBasketballEvent(MapsActivity.this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     private void initializeListeners(){
         initializeLocationListener();
+    }
+
+    private void initializeMarkerListener(){
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                if (markerUserIdMap.containsKey(marker)){
+                    // TODO: Implement UserProfileActivity and start it
+                }else // NOTE: It's event
+                {
+                    BasketballEvent _event = markerEventMap.get(marker);
+                    Bundle positionBundle = new Bundle();
+                    positionBundle.putString("eventKey", _event.getEventId());
+                    if (_event.getCreatedBy().equals(_firebaseAuthClient.getAutheticatedUserId())){
+                        positionBundle.putBoolean("isCurrentUserEvent", true);
+                    }else{
+                        positionBundle.putBoolean("isCurrentUserEvent", false);
+                    }
+                    Intent i = new Intent(MapsActivity.this, ViewBasketballEventActivity.class);
+                    i.putExtras(positionBundle);
+                    startActivity(i);
+                }
+                return true;
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
@@ -240,6 +275,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void initializeMarkers(){
+        initializeUsersMarkers();
+        initializeEventsMarkers();
+        initializeMarkerListener();
+    }
+
+    private void initializeUsersMarkers(){
         ArrayList<User> users = _firebaseRealtimeDatabaseClient.userRepository.getAllUsers();
         if (markerUserIdMap != null) {
             for (Map.Entry<Marker, Integer> entry : markerUserIdMap.entrySet()) {
@@ -272,6 +313,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void initializeEventsMarkers(){
+        ArrayList<BasketballEvent> events = _firebaseRealtimeDatabaseClient.basketballEventRepository.getAllBasketballEvents();
+        if (markerEventMap != null) {
+            for (Map.Entry<Marker, BasketballEvent> entry : markerEventMap.entrySet()) {
+                Marker k = entry.getKey();
+                k.remove();
+            }
+        }
+        markerEventMap = new HashMap<Marker, BasketballEvent>((int)((double)events.size()*1.2));
+        for (int i = 0; i < events.size(); i++)
+        {
+            BasketballEvent event = events.get(i);
+            String lat = event.getLatitude();
+            String lon = event.getLongitude();
+            if (!lat.isEmpty() && !lon.isEmpty()) {
+                LatLng loc = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(loc);
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.basketball));
+                markerOptions.title(event.getEventDescription());
+                Marker marker = mMap.addMarker(markerOptions);
+                markerEventMap.put(marker, event);
+            }
+        }
+    }
+
     private void setOnMapClickListener(){
         if (mMap != null){
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -300,6 +367,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onUsersListUpdated() {
+        initializeMarkers();
+    }
+
+    @Override
+    public void onBasketballEventsListUpdated() {
         initializeMarkers();
     }
 

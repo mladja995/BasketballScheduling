@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        //initializeListView();
+        initializeListView();
     }
 
     @Override
