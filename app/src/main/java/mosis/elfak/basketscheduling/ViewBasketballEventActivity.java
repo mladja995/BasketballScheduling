@@ -3,6 +3,7 @@ package mosis.elfak.basketscheduling;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -134,6 +135,7 @@ public class ViewBasketballEventActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     private void initializeEvent(String key){
         if (key.isEmpty()){
             finish();
@@ -174,5 +176,46 @@ public class ViewBasketballEventActivity extends AppCompatActivity {
         tvMaxNumOfPlayers.setText(Integer.toString(_event.getMaxNumOfPlayers()));
         tvCurrNumOfPlayers.setText(Integer.toString(_event.getCurrentNumOfPlayers()));
         tvEventCreatedOn.setText(_event.getCreatedAt());
+
+        if (isUserAlreadyJoinToEvent()){
+            btnJoinEvent.setBackgroundColor(R.color.light_gray);
+        }
+    }
+
+    public void show_on_map_onClick(View view){
+
+    }
+
+    public void join_event_onClick(View view){
+        if (isUserAlreadyJoinToEvent()){
+            Toast.makeText(this, "You've already join to this event!", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            if (_event.getMaxNumOfPlayers() <= _event.getCurrentNumOfPlayers()){
+                Toast.makeText(this, "Sorry, you can't join. Max number of players reached!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                _firebaseRealtimeDatabaseClient
+                        .basketballEventRepository
+                        .addUserToEvent(_event);
+                Toast.makeText(this, "Great! You've just joined to event!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private boolean isUserAlreadyJoinToEvent(){
+        boolean ret = false;
+        if (_firebaseAuthClient.getAutheticatedUserId().equals(_event.getCreatedBy())){
+            ret = true;
+            return ret;
+        }
+
+        for (int i = 0; i < _event.getJoinedUsers().size(); i++){
+            if (_firebaseAuthClient.getAutheticatedUserId().equals(_event.getJoinedUsers().get(i))){
+                ret = true;
+            }
+        }
+
+        return ret;
     }
 }

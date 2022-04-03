@@ -139,4 +139,17 @@ public class BasketballEvent {
         this.imageURL = imageURL;
     }
 
+    public void addUserToEvent(String userId){
+        this.joinedUsers.add(userId);
+        this.currentNumOfPlayers += 1;
+    }
+
+    public void removeUserFromEvent(String userId){
+        for (int i = 0; i < joinedUsers.size(); i++){
+            if (joinedUsers.get(i).equals(userId)){
+                joinedUsers.remove(i);
+                currentNumOfPlayers -= 1;
+            }
+        }
+    }
 }

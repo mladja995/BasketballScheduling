@@ -1,5 +1,6 @@
 package mosis.elfak.basketscheduling.firebase.repository;
 
+import android.nfc.Tag;
 import android.os.Build;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ import java.util.function.Predicate;
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.User;
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
+import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 
 public class BasketballEventRepository {
 
@@ -242,6 +244,26 @@ public class BasketballEventRepository {
                     if (listener != null){
                         listener.onUserBasketballEventCreatedFailure();
                     }
+                }
+            });
+            tableRef.child(event.getEventId()).setValue(event);
+        }
+    }
+
+    public void addUserToEvent(BasketballEvent event){
+        if (event != null){
+            event.addUserToEvent(FirebaseAuthClient.getInstance().getAutheticatedUserId());
+            tableRef.child(event.getEventId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    FirebaseRealtimeDatabaseClient.getInstance().userRepository.addPointsToCurrentUser(4);
+                    Log.i(TAG, "addUserToEvent: success " + "UserId - " + FirebaseAuthClient.getInstance().getAutheticatedUserId());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    event.removeUserFromEvent(FirebaseAuthClient.getInstance().getAutheticatedUserId());
+                    Log.e(TAG, "addUserToEvent: failure " + "UserId - " + FirebaseAuthClient.getInstance().getAutheticatedUserId() + error.getMessage());
                 }
             });
             tableRef.child(event.getEventId()).setValue(event);

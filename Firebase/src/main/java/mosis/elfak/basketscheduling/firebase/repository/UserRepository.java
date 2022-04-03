@@ -171,7 +171,7 @@ public class UserRepository {
 
     public void createNewUser(User user, String invokerName){
         if (currentUser == null) {
-            user.setPoints(3);
+            user.addPoints(3);
             tableRef.child(user.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -200,6 +200,17 @@ public class UserRepository {
         {
             currentUser.setLatitude(latitude);
             currentUser.setLongitude(longitude);
+            tableRef.child(currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.i(TAG, "setLocationForCurrentUser: success");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.i(TAG, "setLocationForCurrentUser: failure " + error.getMessage());
+                }
+            });
             tableRef.child(currentUser.getUserId()).setValue(currentUser);
         }
     }
@@ -240,7 +251,19 @@ public class UserRepository {
 
     public void addPointsToCurrentUser(int points){
         if (currentUser != null){
-            currentUser.setPoints(points);
+            currentUser.addPoints(points);
+            tableRef.child(currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.i(TAG, "addPointsToCurrentUser: success " + "Added points: " + Integer.toString(points));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "addPointsToCurrentUser: failure " + error.getMessage());
+                    currentUser.removePoints(points);
+                }
+            });
             tableRef.child(currentUser.getUserId()).setValue(currentUser);
         }
     }

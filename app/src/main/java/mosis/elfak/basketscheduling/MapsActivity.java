@@ -198,7 +198,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void accept(Location location) {
                     currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-                    persistLocationForCurrentUser();
+                    //persistLocationForCurrentUser();
                 }
             });
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
