@@ -192,6 +192,7 @@ public class ViewBasketballEventActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    @SuppressLint("ResourceAsColor")
     public void join_event_onClick(View view){
         if (isUserAlreadyJoinToEvent()){
             Toast.makeText(this, "You've already join to this event!", Toast.LENGTH_SHORT).show();
@@ -205,6 +206,8 @@ public class ViewBasketballEventActivity extends AppCompatActivity {
                         .basketballEventRepository
                         .addUserToEvent(_event);
                 Toast.makeText(this, "Great! You've just joined to event!", Toast.LENGTH_SHORT).show();
+                Button btnJoinEvent = findViewById(R.id.button_view_basketball_event_join_event);
+                btnJoinEvent.setBackgroundColor(R.color.light_gray);
             }
         }
     }

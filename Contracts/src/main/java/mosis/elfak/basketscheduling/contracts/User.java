@@ -121,7 +121,11 @@ public class User {
     }
 
     public ArrayList<String> getFriends() {
-        return friends;
+        if (friends != null) {
+            return friends;
+        }else {
+            return new ArrayList<String>();
+        }
     }
 
     public void setFriends(ArrayList<String> friends) {
@@ -129,11 +133,23 @@ public class User {
     }
 
     public ArrayList<FriendRequest> getFriendsRequests() {
-        return friendsRequests;
+        if (friendsRequests != null) {
+            return friendsRequests;
+        }else{
+            return friendsRequests = new ArrayList<FriendRequest>();
+        }
     }
 
     public void setFriendsRequests(ArrayList<FriendRequest> friendsRequests) {
         this.friendsRequests = friendsRequests;
+    }
+
+    public void addFriendRequest(FriendRequest friendRequest){
+        getFriendsRequests().add(friendRequest);
+    }
+
+    public void removeFriendRequest(FriendRequest friendRequest){
+        getFriendsRequests().remove(friendRequest);
     }
 
     @Override

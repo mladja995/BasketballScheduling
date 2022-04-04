@@ -247,7 +247,11 @@ public class MapsActivity extends AppCompatActivity implements
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 if (markerUserIdMap.containsKey(marker)){
-                    // TODO: Implement UserProfileActivity and start it
+                    Bundle positionBundle = new Bundle();
+                    positionBundle.putInt("position", markerUserIdMap.get(marker));
+                    Intent i = new Intent(MapsActivity.this, ViewUserProfileActivity.class);
+                    i.putExtras(positionBundle);
+                    startActivity(i);
                 }else // NOTE: It's event
                 {
                     BasketballEvent _event = markerEventMap.get(marker);

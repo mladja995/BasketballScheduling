@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import mosis.elfak.basketscheduling.contracts.BasketballEvent;
+import mosis.elfak.basketscheduling.contracts.FriendRequest;
 import mosis.elfak.basketscheduling.contracts.User;
 
 public class UserRepository {
@@ -270,5 +272,28 @@ public class UserRepository {
 
     public void InvalidateCurrentUser(){
         currentUser = null;
+    }
+
+    public User getUser(int index){
+        return users.get(index);
+    }
+
+    public void sendFriendRequest(User user, FriendRequest friendRequest){
+        if (user != null && friendRequest != null){
+            user.addFriendRequest(friendRequest);
+            tableRef.child(user.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.i(TAG, "sendFriendRequest: success");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "sendFriendRequest: failure " + error.getMessage());
+                    user.removeFriendRequest(friendRequest);
+                }
+            });
+            tableRef.child(user.getUserId()).setValue(user);
+        }
     }
 }
