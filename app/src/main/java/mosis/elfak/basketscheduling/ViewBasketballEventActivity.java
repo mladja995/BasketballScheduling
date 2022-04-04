@@ -183,7 +183,13 @@ public class ViewBasketballEventActivity extends AppCompatActivity {
     }
 
     public void show_on_map_onClick(View view){
-        // TODO: Implement
+        Bundle eventLocation = new Bundle();
+        eventLocation.putString("lat", _event.getLatitude());
+        eventLocation.putString("lon", _event.getLongitude());
+        eventLocation.putInt("state", Constants.SHOW_EVENT);
+        Intent i = new Intent(ViewBasketballEventActivity.this, MapsActivity.class);
+        i.putExtras(eventLocation);
+        startActivity(i);
     }
 
     public void join_event_onClick(View view){

@@ -4,12 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,12 +28,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.location.LocationListener;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -63,6 +58,7 @@ public class MapsActivity extends AppCompatActivity implements
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     private LatLng currentLocation;
+    private LatLng eventLocation;
     private LocationListener locationListener;
     private boolean showUsers = false;
     private HashMap<Marker, Integer> markerUserIdMap;
@@ -122,7 +118,7 @@ public class MapsActivity extends AppCompatActivity implements
                 onMapReady(mMap);
             } else {
                 mMap.setMyLocationEnabled(true);
-                centerMapOnCurrentLocation();
+                centerMapOnLocation();
                 if (state == Constants.SELECT_LOCATION){
                     setOnMapClickListener();
                 }else {
@@ -194,22 +190,27 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
-    private void centerMapOnCurrentLocation(){
+    private void centerMapOnLocation(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
         }
         else {
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, this.getMainExecutor(), new Consumer<Location>() {
-                @Override
-                public void accept(Location location) {
-                    currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-                    //persistLocationForCurrentUser();
-                }
-            });
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            if (state == Constants.SHOW_EVENT){
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, 15));
+            }
+            else {
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, this.getMainExecutor(), new Consumer<Location>() {
+                    @Override
+                    public void accept(Location location) {
+                        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+                        //persistLocationForCurrentUser();
+                    }
+                });
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            }
         }
     }
 
@@ -219,6 +220,12 @@ public class MapsActivity extends AppCompatActivity implements
 
         if (mapBundle != null){
             state = mapBundle.getInt("state");
+        }
+
+        if (state == Constants.SHOW_EVENT){
+            double lat = Double.parseDouble(mapBundle.getString("lat"));
+            double lon = Double.parseDouble(mapBundle.getString("lon"));
+            eventLocation = new LatLng(lat, lon);
         }
     }
 
@@ -268,7 +275,7 @@ public class MapsActivity extends AppCompatActivity implements
                 if (currentLocation.latitude != location.getLatitude() || currentLocation.longitude != location.getLongitude())
                 {
                     currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    centerMapOnCurrentLocation();
+                    centerMapOnLocation();
                 }
             }
         };
