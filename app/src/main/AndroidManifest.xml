@@ -14,10 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BasketScheduling">
         <activity
+            android:name=".ViewUserProfileActivity"
+            android:exported="false"
+            android:label="@string/label_user_profile"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
             android:name=".ViewBasketballEventActivity"
             android:exported="false"
             android:label="@string/label_basketball_event_activity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".CreateBasketballEventActivity"
             android:exported="false"

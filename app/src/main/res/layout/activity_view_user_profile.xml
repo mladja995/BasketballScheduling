@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ViewUserProfileActivity"
+    android:background="@color/dark_gray">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout_view_user_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_view_user_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/orange"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageView_view_user_profile_profile_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_profile_image_holder_100"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout_view_user_profile"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_view_user_profile_profile_image" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_fullname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_fullname"
+        android:textColor="@color/white"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_view_user_profile_username" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_mail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/label_mail"
+        android:textColor="@color/white"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_view_user_profile_fullname" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/label_phone"
+        android:textColor="@color/white"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_view_user_profile_mail" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/label_points"
+        android:textColor="@color/white"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_view_user_profile_phone" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_fullname_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/orange"
+        android:textSize="16dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_view_user_profile_fullname"
+        app:layout_constraintStart_toEndOf="@+id/textView_view_user_profile_fullname" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_mail_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/orange"
+        android:textSize="16dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_view_user_profile_mail"
+        app:layout_constraintStart_toEndOf="@+id/textView_view_user_profile_mail" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_phone_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/orange"
+        android:textSize="16dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_view_user_profile_phone"
+        app:layout_constraintStart_toEndOf="@+id/textView_view_user_profile_phone" />
+
+    <TextView
+        android:id="@+id/textView_view_user_profile_points_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/orange"
+        android:textSize="16dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_view_user_profile_points"
+        app:layout_constraintStart_toEndOf="@+id/textView_view_user_profile_points" />
+
+    <ProgressBar
+        android:id="@+id/progressBar_view_user_profile"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/orange"
+        app:layout_constraintBottom_toTopOf="@+id/textView_view_user_profile_fullname"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout_view_user_profile" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

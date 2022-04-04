@@ -39,4 +39,11 @@
     <string name="label_createdOn">Created on:</string>
     <string name="text_show_on_map">Show on map</string>
     <string name="text_join_event">Join event</string>
+    <string name="label_user_profile">User profile</string>
+    <string name="label_fullname">Full name:</string>
+    <string name="label_mail">Mail:</string>
+    <string name="label_phone">Phone:</string>
+    <string name="label_points">Points:</string>
+    <string name="label_user_uknown">This user is not in your friends list</string>
+    <string name="text_send_friend_request">Send friend request</string>
 </resources>

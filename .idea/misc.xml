@@ -12,8 +12,10 @@
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_maps.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_rankings.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_register.xml" value="0.33" />
-        <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_view_basketball_event.xml" value="0.33" />
+        <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_register.xml" value="0.12056737588652482" />
+        <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_view_basketball_event.xml" value="0.67" />
+        <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_view_user_profile.xml" value="0.5" />
+        <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/activity_view_user_profile_unknown.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/circle.xml" value="0.1" />
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/list_view_item.xml" value="0.1" />
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/layout/list_view_item1.xml" value="0.1" />
@@ -23,6 +25,7 @@
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/menu/menu_maps.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/menu/menu_rankings.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/menu/menu_view_basketball_event.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Mladen/AndroidStudioProjects/BasketScheduling/app/src/main/res/menu/menu_view_user_profile.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Mladen/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_gallery_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Mladen/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_list_item_1.xml" value="0.36666666666666664" />
       </map>
