@@ -46,6 +46,7 @@ import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.FirebaseStorageClient;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 
+// TODO: Add validation for dates entered in bad format
 public class CreateBasketballEventActivity extends AppCompatActivity implements
         FirebaseStorageClient.ImageEventListener,
         BasketballEventRepository.UserBasketballEventListener{

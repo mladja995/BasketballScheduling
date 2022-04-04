@@ -45,6 +45,7 @@ import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 
+// TODO: Show friends with thumbnail photo on map
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         UserRepository.UsersEventListener,
