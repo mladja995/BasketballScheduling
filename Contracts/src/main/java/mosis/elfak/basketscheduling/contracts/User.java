@@ -1,5 +1,7 @@
 package mosis.elfak.basketscheduling.contracts;
 
+import java.util.ArrayList;
+
 public class User {
     private String userId;
     private String username;
@@ -11,6 +13,8 @@ public class User {
     private String latitude;
     private String longitude;
     private int points;
+    private ArrayList<String> friends;
+    private ArrayList<FriendRequest> friendsRequests;
 
     public User() {
     }
@@ -26,6 +30,8 @@ public class User {
         this.latitude = "";
         this.longitude = "";
         this.points = 0;
+        this.friends = new ArrayList<String>();
+        this.friendsRequests = new ArrayList<FriendRequest>();
     }
 
     public String getUserId() {
@@ -112,6 +118,22 @@ public class User {
 
     public void removePoints(int points){
         this.points -= points;
+    }
+
+    public ArrayList<String> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(ArrayList<String> friends) {
+        this.friends = friends;
+    }
+
+    public ArrayList<FriendRequest> getFriendsRequests() {
+        return friendsRequests;
+    }
+
+    public void setFriendsRequests(ArrayList<FriendRequest> friendsRequests) {
+        this.friendsRequests = friendsRequests;
     }
 
     @Override
