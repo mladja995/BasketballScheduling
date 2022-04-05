@@ -46,4 +46,6 @@
     <string name="label_points">Points:</string>
     <string name="label_user_uknown">This user is not in your friends list</string>
     <string name="text_send_friend_request">Send friend request</string>
+    <string name="label_friends_requests">Friend requests</string>
+    <string name="action_friend_requests">Friend requests</string>
 </resources>

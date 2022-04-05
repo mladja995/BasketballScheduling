@@ -1,14 +1,13 @@
 package mosis.elfak.basketscheduling;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,39 +15,39 @@ import androidx.annotation.Nullable;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
+import mosis.elfak.basketscheduling.contracts.FriendRequestStatus;
 import mosis.elfak.basketscheduling.contracts.User;
 
-public class UserListAdapter extends ArrayAdapter<User> {
+public class PendingFriendRequestsListAdapter extends ArrayAdapter<User> {
 
-    private static final String TAG = "UserListAdapter";
-    private static UsersImagesEventListener _listener;
+    private static final String TAG = "PendingFriendRequestsListAdapter";
+    private static PendingFriendRequestsListAdapter.FriendsImagesEventListener _listener;
 
-    public UserListAdapter(Context context, ArrayList<User> userArrayList){
+    public PendingFriendRequestsListAdapter(Context context, ArrayList<User> userArrayList){
         super(context, R.layout.list_view_item, userArrayList);
     }
 
+    @SuppressLint("LongLogTag")
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         try {
             User user = getItem(position);
             if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_view_item, parent, false);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_view_item2, parent, false);
             }
 
-            ImageView imageView = convertView.findViewById(R.id.list_view_item_user_image);
-            TextView username = convertView.findViewById(R.id.list_view_item_username);
-            TextView fullname = convertView.findViewById(R.id.list_view_item_fullname);
-            TextView points = convertView.findViewById(R.id.list_view_item_points);
+            ImageView imageView = convertView.findViewById(R.id.list_view_item_friend_image);
+            TextView username = convertView.findViewById(R.id.list_view_item_friend_username);
+            TextView status = convertView.findViewById(R.id.list_view_item_friend_status);
 
             Picasso.with(getContext()).load(user.getImageURL()).fit().into(imageView, new com.squareup.picasso.Callback() {
 
                 @Override
                 public void onSuccess() {
-                    _listener.onUsersImagesDownloaded();
+                    _listener.onFriendsImagesDownloaded();
                 }
 
                 @Override
@@ -58,8 +57,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
             });
 
             username.setText(user.getUsername());
-            fullname.setText(user.getFirstname() + " " + user.getLastname());
-            points.setText(String.valueOf(user.getPoints()));
+            status.setText(FriendRequestStatus.Pending.toString());
 
             return convertView;
         }
@@ -69,11 +67,11 @@ public class UserListAdapter extends ArrayAdapter<User> {
         }
     }
 
-    public interface UsersImagesEventListener {
-        void onUsersImagesDownloaded();
+    public interface FriendsImagesEventListener {
+        void onFriendsImagesDownloaded();
     }
 
-    public static void setEventListener(UsersImagesEventListener listener){
+    public static void setEventListener(PendingFriendRequestsListAdapter.FriendsImagesEventListener listener){
         _listener = listener;
     }
 }

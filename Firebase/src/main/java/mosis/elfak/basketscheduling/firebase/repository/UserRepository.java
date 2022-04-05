@@ -278,6 +278,15 @@ public class UserRepository {
         return users.get(index);
     }
 
+    public User getUser(String key){
+        for (int i = 0; i < users.size(); i++){
+            if (users.get(i).getUserId().equals(key)){
+                return users.get(i);
+            }
+        }
+        return null;
+    }
+
     public void sendFriendRequest(User user, FriendRequest friendRequest){
         if (user != null && friendRequest != null){
             user.addFriendRequest(friendRequest);

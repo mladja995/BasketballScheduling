@@ -15,7 +15,9 @@
         android:theme="@style/Theme.BasketScheduling">
         <activity
             android:name=".UserPendingFriendRequests"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/label_friends_requests"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".ViewUserProfileActivity"
             android:exported="false"

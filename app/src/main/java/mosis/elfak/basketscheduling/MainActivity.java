@@ -129,6 +129,11 @@ public class MainActivity extends AppCompatActivity implements
                 Intent i = new Intent(this, CreateBasketballEventActivity.class);
                 startActivity(i);
             }
+            else if (id == R.id.action_friend_requests)
+            {
+                Intent i = new Intent(this, UserPendingFriendRequests.class);
+                startActivity(i);
+            }
             return super.onOptionsItemSelected(item);
         }
         catch (Exception e)

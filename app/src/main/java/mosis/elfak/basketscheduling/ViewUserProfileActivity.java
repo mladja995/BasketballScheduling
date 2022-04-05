@@ -30,6 +30,7 @@ import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 
+// TODO: Implement profile calls for current user
 public class ViewUserProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ViewUserProfileActivity";
