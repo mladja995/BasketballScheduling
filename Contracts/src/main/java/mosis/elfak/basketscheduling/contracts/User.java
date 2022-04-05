@@ -124,7 +124,7 @@ public class User {
         if (friends != null) {
             return friends;
         }else {
-            return new ArrayList<String>();
+            return friends = new ArrayList<String>();
         }
     }
 

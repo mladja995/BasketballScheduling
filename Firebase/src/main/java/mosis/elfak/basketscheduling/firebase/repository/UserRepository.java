@@ -19,6 +19,7 @@ import java.util.Map;
 
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.FriendRequest;
+import mosis.elfak.basketscheduling.contracts.FriendRequestStatus;
 import mosis.elfak.basketscheduling.contracts.User;
 
 public class UserRepository {
@@ -303,6 +304,47 @@ public class UserRepository {
                 }
             });
             tableRef.child(user.getUserId()).setValue(user);
+        }
+    }
+
+    public void updateFriendRequestStatus(FriendRequest friendRequest){
+        if (currentUser != null && friendRequest != null){
+            currentUser.getFriends().add(friendRequest.getUserId());
+            getUser(friendRequest.getUserId()).getFriends().add(currentUser.getUserId());
+
+            tableRef.child(currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.i(TAG, "updateFriendRequestStatus: success");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "updateFriendRequestStatus: failure " + error.getMessage());
+                    currentUser.getFriends().remove(friendRequest.getUserId());
+                    for (int i = 0; i < currentUser.getFriendsRequests().size(); i++){
+                        if (currentUser.getFriendsRequests().get(i).getUserId().equals(friendRequest.getUserId())){
+                            currentUser.getFriendsRequests().get(i).setStatus(FriendRequestStatus.Pending.toString());
+                        }
+                    }
+                }
+            });
+
+            tableRef.child(friendRequest.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.i(TAG, "updateFriendRequestStatus: success");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "updateFriendRequestStatus: failure " + error.getMessage());
+                    getUser(friendRequest.getUserId()).getFriends().remove(currentUser.getUserId());
+                }
+            });
+
+            tableRef.child(currentUser.getUserId()).setValue(currentUser);
+            tableRef.child(friendRequest.getUserId()).setValue(getUser(friendRequest.getUserId()));
         }
     }
 }

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -180,8 +181,65 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onContextItemSelected(MenuItem item){
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+
+        if (item.getItemId() == 1){
+            FriendRequest _friendRequest =
+                    _firebaseRealtimeDatabaseClient
+                    .userRepository
+                    .getCurrentUser()
+                    .getFriendsRequests()
+                    .get(info.position);
+            _friendRequest.setStatus(FriendRequestStatus.Accepted.toString());
+            acceptFriendRequest(_friendRequest);
+            initializeListView();
+        }
+        else if (item.getItemId() == 2){
+            FriendRequest _friendRequest =
+                    _firebaseRealtimeDatabaseClient
+                            .userRepository
+                            .getCurrentUser()
+                            .getFriendsRequests()
+                            .get(info.position);
+            _friendRequest.setStatus(FriendRequestStatus.Declined.toString());
+            declineFriendRequest(_friendRequest);
+            initializeListView();
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
     public void onUsersListUpdated() {
         initializeListView();
+    }
+
+    @SuppressLint("LongLogTag")
+    private void acceptFriendRequest(FriendRequest friendRequest){
+        try{
+            _firebaseRealtimeDatabaseClient
+                    .userRepository
+                    .updateFriendRequestStatus(friendRequest);
+            Toast.makeText(UserPendingFriendRequests.this, "Friend request accepted!", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception e){
+            Toast.makeText(UserPendingFriendRequests.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @SuppressLint("LongLogTag")
+    private void declineFriendRequest(FriendRequest friendRequest){
+        try{
+            _firebaseRealtimeDatabaseClient
+                    .userRepository
+                    .updateFriendRequestStatus(friendRequest);
+            Toast.makeText(UserPendingFriendRequests.this, "Friend request declined!", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception e){
+            Toast.makeText(UserPendingFriendRequests.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     @Override
