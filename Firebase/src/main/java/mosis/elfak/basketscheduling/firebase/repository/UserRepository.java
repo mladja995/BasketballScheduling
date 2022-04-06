@@ -309,8 +309,10 @@ public class UserRepository {
 
     public void updateFriendRequestStatus(FriendRequest friendRequest){
         if (currentUser != null && friendRequest != null){
-            currentUser.getFriends().add(friendRequest.getUserId());
-            getUser(friendRequest.getUserId()).getFriends().add(currentUser.getUserId());
+            if (friendRequest.getStatus().equals(FriendRequestStatus.Accepted.toString())) {
+                currentUser.getFriends().add(friendRequest.getUserId());
+                getUser(friendRequest.getUserId()).getFriends().add(currentUser.getUserId());
+            }
 
             tableRef.child(currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -342,6 +344,7 @@ public class UserRepository {
                     getUser(friendRequest.getUserId()).getFriends().remove(currentUser.getUserId());
                 }
             });
+
 
             tableRef.child(currentUser.getUserId()).setValue(currentUser);
             tableRef.child(friendRequest.getUserId()).setValue(getUser(friendRequest.getUserId()));

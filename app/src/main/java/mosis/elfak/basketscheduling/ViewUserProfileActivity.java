@@ -211,6 +211,7 @@ public class ViewUserProfileActivity extends AppCompatActivity {
         return false;
     }
 
+    @SuppressLint("ResourceAsColor")
     public void send_friend_request_onClick(View view){
         if (isFriendRequestAlreadySent()){
             Toast.makeText(this, "You've already sent friend request!", Toast.LENGTH_SHORT).show();
@@ -220,6 +221,8 @@ public class ViewUserProfileActivity extends AppCompatActivity {
             _firebaseRealtimeDatabaseClient
                     .userRepository
                     .sendFriendRequest(_user, _friendRequest);
+            Button btnSendFriendRequest = findViewById(R.id.button_view_user_profile_send_friend_request);
+            btnSendFriendRequest.setBackgroundColor(R.color.light_gray);
             Toast.makeText(this, "Friend request sent!", Toast.LENGTH_SHORT).show();
         }
     }

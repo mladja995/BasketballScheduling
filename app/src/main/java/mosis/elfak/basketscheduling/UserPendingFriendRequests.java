@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.Constants;
@@ -42,6 +43,7 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
     private PendingFriendRequestsListAdapter pendingFriendRequestsListAdapter;
     private ProgressBar progressBar;
     private ArrayList<User> _friends;
+    private HashMap<Integer, String> contexMenuItemPositionUserMap;
 
     @SuppressLint("LongLogTag")
     @Override
@@ -135,14 +137,18 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
     {
         try
         {
+            contexMenuItemPositionUserMap = new HashMap<Integer, String>();
             pendingFriendRequestsListView = (ListView) findViewById(R.id.user_pending_friends_requests_list);
             _friends = new ArrayList<User>();
             ArrayList<FriendRequest> currentUserFriendRequests = _firebaseRealtimeDatabaseClient.userRepository.getCurrentUser().getFriendsRequests();
+            int _position = 0;
             for (int i = 0; i < currentUserFriendRequests.size(); i++){
                 if (currentUserFriendRequests.get(i).getStatus().equals(FriendRequestStatus.Pending.toString())) {
                     String _friendKey = currentUserFriendRequests.get(i).getUserId();
                     User _friend = _firebaseRealtimeDatabaseClient.userRepository.getUser(_friendKey);
                     _friends.add(_friend);
+                    contexMenuItemPositionUserMap.put(_position, _friend.getUserId());
+                    _position++;
                 }
             }
 
@@ -185,23 +191,13 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 
         if (item.getItemId() == 1){
-            FriendRequest _friendRequest =
-                    _firebaseRealtimeDatabaseClient
-                    .userRepository
-                    .getCurrentUser()
-                    .getFriendsRequests()
-                    .get(info.position);
+            FriendRequest _friendRequest = getFriendRequest(info.position);
             _friendRequest.setStatus(FriendRequestStatus.Accepted.toString());
             acceptFriendRequest(_friendRequest);
             initializeListView();
         }
         else if (item.getItemId() == 2){
-            FriendRequest _friendRequest =
-                    _firebaseRealtimeDatabaseClient
-                            .userRepository
-                            .getCurrentUser()
-                            .getFriendsRequests()
-                            .get(info.position);
+            FriendRequest _friendRequest = getFriendRequest(info.position);
             _friendRequest.setStatus(FriendRequestStatus.Declined.toString());
             declineFriendRequest(_friendRequest);
             initializeListView();
@@ -240,6 +236,21 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
             Toast.makeText(UserPendingFriendRequests.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    private FriendRequest getFriendRequest(Integer contextMenuItemPosition){
+        FriendRequest _pendingFriendRequest = null;
+        String friendUserKey = contexMenuItemPositionUserMap.get(contextMenuItemPosition);
+        if (!friendUserKey.isEmpty() && friendUserKey != null){
+            for (int i = 0; i < _firebaseRealtimeDatabaseClient.userRepository.getCurrentUser().getFriendsRequests().size(); i++){
+                if (_firebaseRealtimeDatabaseClient.userRepository.getCurrentUser().getFriendsRequests().get(i).getUserId().equals(friendUserKey)
+                    && _firebaseRealtimeDatabaseClient.userRepository.getCurrentUser().getFriendsRequests().get(i).getStatus().equals(FriendRequestStatus.Pending.toString())){
+                    _pendingFriendRequest = _firebaseRealtimeDatabaseClient.userRepository.getCurrentUser().getFriendsRequests().get(i);
+                    break;
+                }
+            }
+        }
+        return _pendingFriendRequest;
     }
 
     @Override
