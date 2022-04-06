@@ -10,6 +10,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -20,12 +28,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import android.location.LocationListener;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -45,7 +57,6 @@ import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 
-// TODO: Show friends with thumbnail photo on map
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         UserRepository.UsersEventListener,
@@ -64,6 +75,7 @@ public class MapsActivity extends AppCompatActivity implements
     private boolean showUsers = false;
     private HashMap<Marker, Integer> markerUserIdMap;
     private HashMap<Marker, BasketballEvent> markerEventMap;
+    private static HashMap<String, Bitmap> usersImagesBitmaps;
     private int state = 0;
     private boolean selCoorsEnabled = false;
 
@@ -236,6 +248,7 @@ public class MapsActivity extends AppCompatActivity implements
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
         _firebaseRealtimeDatabaseClient.userRepository.setEventListenerForUsers(MapsActivity.this);
         _firebaseRealtimeDatabaseClient.basketballEventRepository.setEventListenerForBasketballEvent(MapsActivity.this);
+        usersImagesBitmaps = new HashMap<String, Bitmap>();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
@@ -323,6 +336,8 @@ public class MapsActivity extends AppCompatActivity implements
                 }
             }
         }
+
+        initializeUsersImagesBitmaps();
     }
 
     private void initializeEventsMarkers(){
@@ -404,5 +419,84 @@ public class MapsActivity extends AppCompatActivity implements
             Marker k = entry.getKey();
             k.setVisible(false);
         }
+    }
+
+    private boolean isUserFriend(String key){
+        User _currentUser = _firebaseRealtimeDatabaseClient.userRepository.getCurrentUser();
+        for (int i = 0; i < _currentUser.getFriends().size(); i++){
+            if (key.equals(_currentUser.getFriends().get(i))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void initializeUsersImagesBitmaps(){
+        for (Map.Entry<Marker, Integer> entry : markerUserIdMap.entrySet()) {
+            Marker k = entry.getKey();
+            String imageURL = _firebaseRealtimeDatabaseClient.userRepository.getAllUsers().get(entry.getValue()).getImageURL();
+            String userKey = _firebaseRealtimeDatabaseClient.userRepository.getAllUsers().get(entry.getValue()).getUserId();
+            Target _target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Bitmap _bitmapRound = getRoundedCornerBitmap(bitmap, R.color.orange, 20, 2, MapsActivity.this);
+                    k.setIcon(BitmapDescriptorFactory.fromBitmap(_bitmapRound));
+                    if (!usersImagesBitmaps.containsKey(userKey)){
+                        usersImagesBitmaps.put(userKey, bitmap);
+                    }
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
+            if (isUserFriend(userKey)) {
+                if (usersImagesBitmaps.containsKey(userKey)){
+                    k.setIcon(BitmapDescriptorFactory.fromBitmap(usersImagesBitmaps.get(userKey)));
+                }else {
+                    Picasso.with(this).load(imageURL).resize(100, 100).into(_target);
+                }
+            }
+            //break;
+        }
+    }
+
+    private Bitmap getRoundedCornerBitmap(Bitmap bitmap, int color, int cornerDips, int borderDips, Context context) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int borderSizePx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) borderDips,
+                context.getResources().getDisplayMetrics());
+        final int cornerSizePx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) cornerDips,
+                context.getResources().getDisplayMetrics());
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        // prepare canvas for transfer
+        paint.setAntiAlias(true);
+        paint.setColor(0xFFFFFFFF);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawRoundRect(rectF, cornerSizePx, cornerSizePx, paint);
+
+        // draw bitmap
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        // draw border
+        paint.setColor(color);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth((float) borderSizePx);
+        canvas.drawRoundRect(rectF, cornerSizePx, cornerSizePx, paint);
+
+        return output;
     }
 }
