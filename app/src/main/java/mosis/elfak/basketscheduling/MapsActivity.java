@@ -432,38 +432,41 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
     private void initializeUsersImagesBitmaps(){
-        for (Map.Entry<Marker, Integer> entry : markerUserIdMap.entrySet()) {
-            Marker k = entry.getKey();
-            String imageURL = _firebaseRealtimeDatabaseClient.userRepository.getAllUsers().get(entry.getValue()).getImageURL();
-            String userKey = _firebaseRealtimeDatabaseClient.userRepository.getAllUsers().get(entry.getValue()).getUserId();
-            Target _target = new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    Bitmap _bitmapRound = getRoundedCornerBitmap(bitmap, R.color.orange, 20, 2, MapsActivity.this);
-                    k.setIcon(BitmapDescriptorFactory.fromBitmap(_bitmapRound));
-                    if (!usersImagesBitmaps.containsKey(userKey)){
-                        usersImagesBitmaps.put(userKey, bitmap);
+        try {
+            for (Map.Entry<Marker, Integer> entry : markerUserIdMap.entrySet()) {
+                Marker k = entry.getKey();
+                String imageURL = _firebaseRealtimeDatabaseClient.userRepository.getAllUsers().get(entry.getValue()).getImageURL();
+                String userKey = _firebaseRealtimeDatabaseClient.userRepository.getAllUsers().get(entry.getValue()).getUserId();
+                Target _target = new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        Bitmap _bitmapRound = getRoundedCornerBitmap(bitmap, R.color.orange, 20, 2, MapsActivity.this);
+                        k.setIcon(BitmapDescriptorFactory.fromBitmap(_bitmapRound));
+                        if (!usersImagesBitmaps.containsKey(userKey)) {
+                            usersImagesBitmaps.put(userKey, bitmap);
+                        }
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                };
+                if (isUserFriend(userKey)) {
+                    if (usersImagesBitmaps.containsKey(userKey)) {
+                        k.setIcon(BitmapDescriptorFactory.fromBitmap(usersImagesBitmaps.get(userKey)));
+                    } else {
+                        Picasso.with(this).load(imageURL).resize(100, 100).into(_target);
                     }
                 }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            };
-            if (isUserFriend(userKey)) {
-                if (usersImagesBitmaps.containsKey(userKey)){
-                    k.setIcon(BitmapDescriptorFactory.fromBitmap(usersImagesBitmaps.get(userKey)));
-                }else {
-                    Picasso.with(this).load(imageURL).resize(100, 100).into(_target);
-                }
             }
-            //break;
+        }catch (Exception e){
+            Log.e(TAG, e.getMessage());
         }
     }
 
