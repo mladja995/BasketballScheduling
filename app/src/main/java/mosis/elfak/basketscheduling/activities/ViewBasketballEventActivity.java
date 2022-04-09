@@ -1,11 +1,9 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,8 +17,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.databinding.ActivityViewBasketballEventBinding;

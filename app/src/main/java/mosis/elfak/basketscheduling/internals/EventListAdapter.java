@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.internals;
 
 import android.content.Context;
 import android.util.Log;
@@ -20,6 +20,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 
 

@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,11 +18,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
-import mosis.elfak.basketscheduling.contracts.BasketballEvent;
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.contracts.FriendRequest;
 import mosis.elfak.basketscheduling.contracts.FriendRequestStatus;
@@ -31,11 +29,12 @@ import mosis.elfak.basketscheduling.databinding.ActivityUserPendingFriendRequest
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
+import mosis.elfak.basketscheduling.internals.PendingFriendRequestsListAdapter;
 
-public class UserPendingFriendRequests extends AppCompatActivity implements
+public class UserPendingFriendRequestsActivity extends AppCompatActivity implements
         UserRepository.UsersEventListener, PendingFriendRequestsListAdapter.FriendsImagesEventListener {
 
-    private static final String TAG = "UserPendingFriendRequests";
+    private static final String TAG = "UserPendingFriendRequestsActivity";
     private ActivityUserPendingFriendRequestsBinding binding;
     private FirebaseServices _firebaseServices;
     private FirebaseRealtimeDatabaseClient _firebaseRealtimeDatabaseClient;
@@ -126,7 +125,7 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
     }
 
     private void initialize(){
-        _firebaseServices = FirebaseServices.getInstance(UserPendingFriendRequests.this);
+        _firebaseServices = FirebaseServices.getInstance(UserPendingFriendRequestsActivity.this);
         _firebaseRealtimeDatabaseClient = _firebaseServices.firebaseRealtimeDatabaseClient;
         progressBar = findViewById(R.id.progressBar_user_pending_friends_requests);
         progressBar.setVisibility(View.GONE);
@@ -157,7 +156,7 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
                 progressBar.setVisibility(View.VISIBLE);
             }
 
-            pendingFriendRequestsListAdapter = new PendingFriendRequestsListAdapter(UserPendingFriendRequests.this, _friends);
+            pendingFriendRequestsListAdapter = new PendingFriendRequestsListAdapter(UserPendingFriendRequestsActivity.this, _friends);
             pendingFriendRequestsListView.setAdapter(pendingFriendRequestsListAdapter);
             InitializeContextMenuListener();
         }
@@ -216,10 +215,10 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
             _firebaseRealtimeDatabaseClient
                     .userRepository
                     .updateFriendRequestStatus(friendRequest);
-            Toast.makeText(UserPendingFriendRequests.this, "Friend request accepted!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UserPendingFriendRequestsActivity.this, "Friend request accepted!", Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
-            Toast.makeText(UserPendingFriendRequests.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UserPendingFriendRequestsActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
             Log.e(TAG, e.getMessage());
         }
     }
@@ -230,10 +229,10 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
             _firebaseRealtimeDatabaseClient
                     .userRepository
                     .updateFriendRequestStatus(friendRequest);
-            Toast.makeText(UserPendingFriendRequests.this, "Friend request declined!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UserPendingFriendRequestsActivity.this, "Friend request declined!", Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
-            Toast.makeText(UserPendingFriendRequests.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UserPendingFriendRequestsActivity.this, "Ops! Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
             Log.e(TAG, e.getMessage());
         }
     }
@@ -255,7 +254,7 @@ public class UserPendingFriendRequests extends AppCompatActivity implements
 
     @Override
     public String getInvokerName() {
-        return UserPendingFriendRequests.class.getName();
+        return UserPendingFriendRequestsActivity.class.getName();
     }
 
     @Override

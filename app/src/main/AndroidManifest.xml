@@ -14,32 +14,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BasketScheduling">
         <activity
-            android:name=".FilterActivity"
+            android:name=".activities.FilterActivity"
             android:exported="false"
             android:label="@string/label_filter"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
-            android:name=".UserPendingFriendRequests"
+            android:name=".activities.UserPendingFriendRequestsActivity"
             android:exported="false"
             android:label="@string/label_friends_requests"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".ViewUserProfileActivity"
+            android:name=".activities.ViewUserProfileActivity"
             android:exported="false"
             android:label="@string/label_user_profile"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".ViewBasketballEventActivity"
+            android:name=".activities.ViewBasketballEventActivity"
             android:exported="false"
             android:label="@string/label_basketball_event_activity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".CreateBasketballEventActivity"
+            android:name=".activities.CreateBasketballEventActivity"
             android:exported="false"
             android:label="@string/label_create_basketball_event_activity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".RankingsActivity"
+            android:name=".activities.RankingsActivity"
             android:exported="false"
             android:label="@string/label_rankings_activity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -59,16 +59,16 @@
             android:value="AIzaSyB8Qy6p2PcU4vIbLR8lZkY9AyJg-QJpHvo" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".activities.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activities.RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
@@ -78,12 +78,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="false"
             android:label="@string/label_main_activity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
-        <service android:name=".LocationService" />
+        <service android:name=".services.LocationService" />
     </application>
 
 </manifest>

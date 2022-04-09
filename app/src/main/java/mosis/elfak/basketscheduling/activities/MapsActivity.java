@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -11,12 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -28,7 +22,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -37,7 +30,6 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import android.location.LocationListener;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -47,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.contracts.User;
@@ -57,6 +50,7 @@ import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 import mosis.elfak.basketscheduling.helpers.Utils;
+import mosis.elfak.basketscheduling.internals.EventsFilter;
 
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,

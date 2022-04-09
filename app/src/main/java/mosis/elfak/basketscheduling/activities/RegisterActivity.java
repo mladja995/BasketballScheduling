@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.User;
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;

@@ -35,7 +35,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".CreateBasketballEventActivity">
+            tools:context=".activities.CreateBasketballEventActivity">
 
             <ImageView
                 android:id="@+id/imageView_create_basketball_event_image"

@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.services;
 
 import android.Manifest;
 import android.app.Notification;
@@ -22,7 +22,7 @@ import androidx.core.app.ActivityCompat;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.function.Consumer;
 
-import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 

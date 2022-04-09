@@ -1,10 +1,10 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import mosis.elfak.basketscheduling.contracts.Constants;
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 
@@ -22,10 +22,9 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
+import mosis.elfak.basketscheduling.services.LocationService;
 
 public class LoginActivity extends AppCompatActivity implements
         FirebaseAuthClient.UserAuthenticationEventListener,

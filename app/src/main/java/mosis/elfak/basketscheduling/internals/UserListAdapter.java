@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.internals;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +19,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.User;
 
 public class UserListAdapter extends ArrayAdapter<User> {

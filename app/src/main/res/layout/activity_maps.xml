@@ -3,7 +3,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context=".MapsActivity">
+tools:context=".activities.MapsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout_maps"
@@ -33,7 +33,7 @@ tools:context=".MapsActivity">
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity" />
+        tools:context=".activities.MapsActivity" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

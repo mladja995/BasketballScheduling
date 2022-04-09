@@ -1,16 +1,13 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.internals;
 
 import android.os.Build;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.helpers.Utils;

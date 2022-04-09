@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -18,14 +17,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.contracts.User;
-import mosis.elfak.basketscheduling.databinding.ActivityMainBinding;
 import mosis.elfak.basketscheduling.databinding.ActivityRankingsBinding;
-import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
+import mosis.elfak.basketscheduling.internals.UserListAdapter;
 
 public class RankingsActivity extends AppCompatActivity implements UserRepository.UsersEventListener, UserListAdapter.UsersImagesEventListener {
 

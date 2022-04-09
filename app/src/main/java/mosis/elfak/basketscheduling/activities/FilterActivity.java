@@ -1,16 +1,16 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.User;
-import mosis.elfak.basketscheduling.databinding.ActivityCreateBasketballEventBinding;
 import mosis.elfak.basketscheduling.databinding.ActivityFilterBinding;
-import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
+import mosis.elfak.basketscheduling.internals.EventsFilter;
 
 
 import android.os.Build;

@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -34,9 +34,9 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.databinding.ActivityCreateBasketballEventBinding;

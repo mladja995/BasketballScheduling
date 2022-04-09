@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -19,10 +19,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.BasketballEvent;
 import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.databinding.ActivityMainBinding;
@@ -30,6 +29,8 @@ import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
+import mosis.elfak.basketscheduling.internals.EventListAdapter;
+import mosis.elfak.basketscheduling.internals.EventsFilter;
 
 public class MainActivity extends AppCompatActivity implements
         BasketballEventRepository.BasketballEventListener,
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements
             }
             else if (id == R.id.action_friend_requests)
             {
-                Intent i = new Intent(this, UserPendingFriendRequests.class);
+                Intent i = new Intent(this, UserPendingFriendRequestsActivity.class);
                 startActivity(i);
             }
             else if (id == R.id.action_filter)

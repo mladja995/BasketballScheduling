@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,12 +19,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.squareup.picasso.Picasso;
 
-import mosis.elfak.basketscheduling.contracts.BasketballEvent;
-import mosis.elfak.basketscheduling.contracts.Constants;
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.FriendRequest;
 import mosis.elfak.basketscheduling.contracts.FriendRequestStatus;
 import mosis.elfak.basketscheduling.contracts.User;
-import mosis.elfak.basketscheduling.databinding.ActivityViewBasketballEventBinding;
 import mosis.elfak.basketscheduling.databinding.ActivityViewUserProfileBinding;
 import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;

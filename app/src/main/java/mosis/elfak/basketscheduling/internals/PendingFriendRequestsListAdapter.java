@@ -1,4 +1,4 @@
-package mosis.elfak.basketscheduling;
+package mosis.elfak.basketscheduling.internals;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import mosis.elfak.basketscheduling.R;
 import mosis.elfak.basketscheduling.contracts.FriendRequestStatus;
 import mosis.elfak.basketscheduling.contracts.User;
 
