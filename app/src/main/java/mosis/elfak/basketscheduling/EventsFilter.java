@@ -31,6 +31,12 @@ public class EventsFilter {
     private EventsFilter(){
         this._isFilterActive = false;
         this._filteredEvents = new ArrayList<BasketballEvent>();
+        this._createdOn = null;
+        this._beginsAt = null;
+        this._endsOn = null;
+        this._maxNumOfPlayers = -1;
+        this._currNumOfPlayers = -1;
+        this._radius = -1;
     }
 
     private static class SingletonHolder{
@@ -134,7 +140,7 @@ public class EventsFilter {
         if (radius.isEmpty() || radius == null){
             return this;
         }
-        double _radius = Double.parseDouble(radius);
+        double _radius = Double.parseDouble(radius) * 1000;
         this._isFilterActive = true;
         this._radius = _radius;
         ArrayList<BasketballEvent> _list = new ArrayList<BasketballEvent>();

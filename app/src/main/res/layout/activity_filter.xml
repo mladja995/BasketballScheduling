@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FilterActivity"
+    android:background="@color/dark_gray">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_scrollFlags="noScroll">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/orange"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <TextView
+        android:id="@+id/textView_filter_createdOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_createdOn"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout_filter" />
+
+
+    <TextView
+        android:id="@+id/textView_filter_beginsAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_begins_at"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_filter_createdOn" />
+
+    <TextView
+        android:id="@+id/textView_filter_endsOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_ends_on"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_filter_beginsAt" />
+
+    <TextView
+        android:id="@+id/textView_filter_max_num_of_players"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_max_num_of_players"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_filter_endsOn" />
+
+    <TextView
+        android:id="@+id/textView_filter_curr_num_of_players"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_current_num_of_players"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_filter_max_num_of_players" />
+
+    <TextView
+        android:id="@+id/textView_filter_radius"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_radius"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_filter_curr_num_of_players" />
+
+    <Button
+        android:id="@+id/button_filter_applyClearFilter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:onClick="applyClearFilter_btn_onClick"
+        android:text="@string/text_apply_filter"
+        android:textColor="@color/orange"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_filter_radius" />
+
+    <EditText
+        android:id="@+id/editTextDate_filter_createdOn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/orange"
+        android:hint="@string/edit_text_created_at"
+        android:textColorHint="@color/orange"
+        android:textSize="15dp"
+        android:textStyle="italic"
+        android:ems="10"
+        android:inputType="date"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_filter_createdOn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_filter_createdOn" />
+
+    <EditText
+        android:id="@+id/editTextDate_filter_beginsAt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/orange"
+        android:hint="@string/edit_text_begins_at"
+        android:textColorHint="@color/orange"
+        android:textSize="15dp"
+        android:textStyle="italic"
+        android:ems="10"
+        android:inputType="datetime"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_filter_beginsAt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_filter_beginsAt" />
+
+    <EditText
+        android:id="@+id/editTextDate_filter_endsOn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/orange"
+        android:hint="@string/edit_text_ends_on"
+        android:textColorHint="@color/orange"
+        android:textSize="15dp"
+        android:textStyle="italic"
+        android:ems="10"
+        android:inputType="datetime"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_filter_endsOn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_filter_endsOn" />
+
+    <EditText
+        android:id="@+id/editTextDate_filter_maxNumOfPlayers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/orange"
+        android:textColorHint="@color/orange"
+        android:textSize="15dp"
+        android:textStyle="italic"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_filter_max_num_of_players"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_filter_max_num_of_players" />
+
+    <EditText
+        android:id="@+id/editTextDate_filter_currNumOfPlayers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/orange"
+        android:textColorHint="@color/orange"
+        android:textSize="15dp"
+        android:textStyle="italic"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_filter_curr_num_of_players"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_filter_curr_num_of_players" />
+
+    <EditText
+        android:id="@+id/editTextDate_filter_radius"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/orange"
+        android:hint="@string/text_radius_hint"
+        android:textColorHint="@color/orange"
+        android:textSize="15dp"
+        android:textStyle="italic"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_filter_radius"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_filter_radius" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

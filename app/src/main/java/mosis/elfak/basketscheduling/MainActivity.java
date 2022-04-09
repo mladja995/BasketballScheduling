@@ -31,6 +31,7 @@ import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 
+// TODO: OnContextItemClick add code to search in correct if filter applied
 public class MainActivity extends AppCompatActivity implements
         BasketballEventRepository.BasketballEventListener,
         EventListAdapter.EventsImagesEventListener {
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
     private CheckBox checkBox;
     private ArrayList<BasketballEvent> events;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         super.onResume();
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         try
@@ -136,6 +138,11 @@ public class MainActivity extends AppCompatActivity implements
                 Intent i = new Intent(this, UserPendingFriendRequests.class);
                 startActivity(i);
             }
+            else if (id == R.id.action_filter)
+            {
+                Intent i = new Intent(this, FilterActivity.class);
+                startActivity(i);
+            }
             return super.onOptionsItemSelected(item);
         }
         catch (Exception e)
@@ -157,21 +164,31 @@ public class MainActivity extends AppCompatActivity implements
         checkBox.setChecked(false);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void initializeListView()
     {
         try
         {
+            ArrayList<BasketballEvent> _filteredEvents = EventsFilter.getInstance().getFilteredEvents();;
             events = _firebaseRealtimeDatabaseClient
                     .basketballEventRepository
                     .getAllBasketballEvents();
 
             if (!checkBox.isChecked()){
                 ArrayList<BasketballEvent> _notUserEvents = new ArrayList<BasketballEvent>();
-                for (int i = 0; i < events.size(); i++){
-                    BasketballEvent _event = _firebaseRealtimeDatabaseClient.basketballEventRepository.getEvent(i);
-                    if (!_firebaseAuthClient.getAutheticatedUserId().equals(_event.getCreatedBy())){
-                        _notUserEvents.add(_event);
+                if (!EventsFilter.getInstance().isFilterActive()) {
+                    for (int i = 0; i < events.size(); i++) {
+                        BasketballEvent _event = _firebaseRealtimeDatabaseClient.basketballEventRepository.getEvent(i);
+                        if (!_firebaseAuthClient.getAutheticatedUserId().equals(_event.getCreatedBy())) {
+                            _notUserEvents.add(_event);
+                        }
+                    }
+                }else{
+                    for (int i = 0; i < _filteredEvents.size(); i++) {
+                        BasketballEvent _event = _filteredEvents.get(i);
+                        if (!_firebaseAuthClient.getAutheticatedUserId().equals(_event.getCreatedBy())) {
+                            _notUserEvents.add(_event);
+                        }
                     }
                 }
                 events = _notUserEvents;
@@ -250,12 +267,12 @@ public class MainActivity extends AppCompatActivity implements
         return super.onContextItemSelected(item);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void checkBox_onClick(View view){
         initializeListView();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBasketballEventsListUpdated() {
         initializeListView();

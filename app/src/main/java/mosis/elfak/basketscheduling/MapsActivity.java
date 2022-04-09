@@ -57,6 +57,7 @@ import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 
+// TODO: Add code for filtering events on map
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         UserRepository.UsersEventListener,

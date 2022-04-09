@@ -14,10 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BasketScheduling">
         <activity
+            android:name=".FilterActivity"
+            android:exported="false"
+            android:label="@string/label_filter"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity
             android:name=".UserPendingFriendRequests"
             android:exported="false"
             android:label="@string/label_friends_requests"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".ViewUserProfileActivity"
             android:exported="false"

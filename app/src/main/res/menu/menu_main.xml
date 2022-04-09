@@ -30,6 +30,11 @@
         android:title="@string/action_friend_requests"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/action_filter"
+        android:orderInCategory="100"
+        android:title="@string/action_filter"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_singOut"
         android:orderInCategory="100"
         android:title="@string/action_singOut"

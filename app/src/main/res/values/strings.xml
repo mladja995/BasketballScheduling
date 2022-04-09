@@ -20,6 +20,7 @@
     <string name="action_singOut">Sign out</string>
     <string name="label_create_basketball_event_activity">Create Basketball Event</string>
     <string name="edit_text_event_description_hint">Enter short description about event</string>
+    <string name="edit_text_created_at">Event created on (MM/dd/yyyy)</string>
     <string name="edit_text_begins_at">Event begins at (MM/dd/yyyy HH:mm)</string>
     <string name="edit_text_ends_on">Event ends on (MM/dd/yyyy HH:mm)</string>
     <string name="text_set_btn">Set</string>
@@ -38,6 +39,8 @@
     <string name="label_current_num_of_players">Current num of players:</string>
     <string name="label_createdOn">Created on:</string>
     <string name="text_show_on_map">Show on map</string>
+    <string name="text_apply_filter">Apply filter</string>
+    <string name="text_clear_filter">Clear filter</string>
     <string name="text_join_event">Join event</string>
     <string name="label_user_profile">User profile</string>
     <string name="label_fullname">Full name:</string>
@@ -48,4 +51,8 @@
     <string name="text_send_friend_request">Send friend request</string>
     <string name="label_friends_requests">Friend requests</string>
     <string name="action_friend_requests">Friend requests</string>
+    <string name="label_filter">Filter</string>
+    <string name="label_radius">Radius:</string>
+    <string name="text_radius_hint">Expressed in kilometers</string>
+    <string name="action_filter">Filter</string>
 </resources>

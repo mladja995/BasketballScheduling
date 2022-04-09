@@ -13,5 +13,9 @@
         android:orderInCategory="100"
         android:title="@string/action_show_hide_users"
         app:showAsAction="never"/>
-
+    <item
+        android:id="@+id/action_filter"
+        android:orderInCategory="100"
+        android:title="@string/action_filter"
+        app:showAsAction="never"/>
 </menu>
