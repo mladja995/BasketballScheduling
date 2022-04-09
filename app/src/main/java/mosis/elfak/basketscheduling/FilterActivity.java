@@ -154,7 +154,7 @@ public class FilterActivity extends AppCompatActivity
                 etCurrNumOfPlayers.setText(Integer.toString(EventsFilter.getInstance().get_currNumOfPlayers()));
             }
             if (EventsFilter.getInstance().get_radius() != -1){
-                etRadius.setText(Double.toString(EventsFilter.getInstance().get_radius()));
+                etRadius.setText(Double.toString(EventsFilter.getInstance().get_radius() / 1000));
             }
         } else{
             btnApplyClearFilter.setText("Apply filter");

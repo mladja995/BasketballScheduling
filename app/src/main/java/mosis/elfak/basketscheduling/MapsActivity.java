@@ -56,8 +56,8 @@ import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
+import mosis.elfak.basketscheduling.helpers.Utils;
 
-// TODO: Add code for filtering events on map
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         UserRepository.UsersEventListener,
@@ -79,6 +79,7 @@ public class MapsActivity extends AppCompatActivity implements
     private static HashMap<String, Bitmap> usersImagesBitmaps;
     private int state = 0;
     private boolean selCoorsEnabled = false;
+    private boolean flag = false;
 
 
     @RequiresApi(api = Build.VERSION_CODES.R)
@@ -100,6 +101,7 @@ public class MapsActivity extends AppCompatActivity implements
             processIntent();
             initialize();
             initializeListeners();
+            flag = true;
         }
         catch (Exception e)
         {
@@ -108,6 +110,22 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!flag) {
+            initializeMarkers();
+        }
+        flag = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        flag = false;
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -165,6 +183,7 @@ public class MapsActivity extends AppCompatActivity implements
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -198,6 +217,10 @@ public class MapsActivity extends AppCompatActivity implements
                 }
             } else if (id == android.R.id.home) {
                 finish();
+            }else if (id == R.id.action_filter)
+            {
+                Intent i = new Intent(this, FilterActivity.class);
+                startActivity(i);
             }
         }
         return super.onOptionsItemSelected(item);
@@ -300,6 +323,7 @@ public class MapsActivity extends AppCompatActivity implements
         };
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void initializeMarkers(){
         initializeUsersMarkers();
         initializeEventsMarkers();
@@ -341,8 +365,14 @@ public class MapsActivity extends AppCompatActivity implements
         initializeUsersImagesBitmaps();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void initializeEventsMarkers(){
-        ArrayList<BasketballEvent> events = _firebaseRealtimeDatabaseClient.basketballEventRepository.getAllBasketballEvents();
+        ArrayList<BasketballEvent> events = new ArrayList<BasketballEvent>();
+        if (!EventsFilter.getInstance().isFilterActive()){
+            events = _firebaseRealtimeDatabaseClient.basketballEventRepository.getAllBasketballEvents();
+        }else {
+            events = EventsFilter.getInstance().getFilteredEvents();
+        }
         if (markerEventMap != null) {
             for (Map.Entry<Marker, BasketballEvent> entry : markerEventMap.entrySet()) {
                 Marker k = entry.getKey();
@@ -393,11 +423,13 @@ public class MapsActivity extends AppCompatActivity implements
                 .setLocationForCurrentUser(Double.toString(currentLocation.latitude), Double.toString(currentLocation.longitude));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onUsersListUpdated() {
         initializeMarkers();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBasketballEventsListUpdated() {
         initializeMarkers();
@@ -441,7 +473,7 @@ public class MapsActivity extends AppCompatActivity implements
                 Target _target = new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        Bitmap _bitmapRound = getRoundedCornerBitmap(bitmap, R.color.orange, 20, 2, MapsActivity.this);
+                        Bitmap _bitmapRound = Utils.getRoundedCornerBitmap(bitmap, R.color.orange, 20, 2, MapsActivity.this);
                         k.setIcon(BitmapDescriptorFactory.fromBitmap(_bitmapRound));
                         if (!usersImagesBitmaps.containsKey(userKey)) {
                             usersImagesBitmaps.put(userKey, bitmap);
@@ -471,36 +503,4 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    private Bitmap getRoundedCornerBitmap(Bitmap bitmap, int color, int cornerDips, int borderDips, Context context) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int borderSizePx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) borderDips,
-                context.getResources().getDisplayMetrics());
-        final int cornerSizePx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) cornerDips,
-                context.getResources().getDisplayMetrics());
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-
-        // prepare canvas for transfer
-        paint.setAntiAlias(true);
-        paint.setColor(0xFFFFFFFF);
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawARGB(0, 0, 0, 0);
-        canvas.drawRoundRect(rectF, cornerSizePx, cornerSizePx, paint);
-
-        // draw bitmap
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        // draw border
-        paint.setColor(color);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth((float) borderSizePx);
-        canvas.drawRoundRect(rectF, cornerSizePx, cornerSizePx, paint);
-
-        return output;
-    }
 }

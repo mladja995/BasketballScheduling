@@ -31,7 +31,6 @@ import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 
-// TODO: OnContextItemClick add code to search in correct if filter applied
 public class MainActivity extends AppCompatActivity implements
         BasketballEventRepository.BasketballEventListener,
         EventListAdapter.EventsImagesEventListener {
@@ -246,11 +245,16 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onContextItemSelected(MenuItem item){
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         Bundle positionBundle = new Bundle();
-        positionBundle.putString("eventKey", events.get(info.position).getEventId());
+        if (!EventsFilter.getInstance().isFilterActive()) {
+            positionBundle.putString("eventKey", events.get(info.position).getEventId());
+        }else{
+            positionBundle.putString("eventKey", EventsFilter.getInstance().getFilteredEvents().get(info.position).getEventId());
+        }
         if (checkBox.isChecked()){
             positionBundle.putBoolean("isCurrentUserEvent", true);
         }else{

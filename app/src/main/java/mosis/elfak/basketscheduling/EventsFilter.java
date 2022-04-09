@@ -21,6 +21,7 @@ public class EventsFilter {
     private boolean _isFilterActive;
     private ArrayList<BasketballEvent> _filteredEvents;
     private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+    private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     private LocalDate _createdOn;
     private LocalDateTime _beginsAt;
     private LocalDateTime _endsOn;
@@ -60,9 +61,14 @@ public class EventsFilter {
         this._createdOn = dateTime;
         ArrayList<BasketballEvent> _list = new ArrayList<BasketballEvent>();
         for (int i = 0; i < _filteredEvents.size(); i++){
-            if (LocalDateTime.parse(_filteredEvents.get(i).getCreatedAt(), dateTimeFormatter).getYear() == dateTime.getYear()
-                && LocalDateTime.parse(_filteredEvents.get(i).getCreatedAt(), dateTimeFormatter).getMonthValue() == dateTime.getMonthValue()
-                && LocalDateTime.parse(_filteredEvents.get(i).getCreatedAt(), dateTimeFormatter).getDayOfMonth() == dateTime.getDayOfMonth()){
+            LocalDateTime _eventDateTime = LocalDateTime.parse(_filteredEvents.get(i).getCreatedAt(), dateTimeFormatter);
+            int _eventYear = _eventDateTime.getYear();
+            int _eventMonth = _eventDateTime.getMonthValue();
+            int _eventDay = _eventDateTime.getDayOfMonth();
+            int _year = dateTime.getYear();
+            int _month = dateTime.getMonthValue();
+            int _day = dateTime.getDayOfMonth();
+            if (_eventYear == _year && _eventMonth == _month && _eventDay == _day){
                 _list.add(_filteredEvents.get(i));
             }
         }
