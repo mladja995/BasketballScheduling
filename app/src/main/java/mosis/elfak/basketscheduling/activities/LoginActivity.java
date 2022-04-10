@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     private static final String TAG = "LoginActivity";
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
+    private static final int PERMISSION_ACCESS_BACKGROUND_LOCATION = 2;
     private FirebaseServices _firebaseServices;
     private FirebaseAuthClient _firebaseAuthClient;
     private FirebaseRealtimeDatabaseClient _firebaseRealtimeDatabaseClient;
@@ -223,10 +224,16 @@ public class LoginActivity extends AppCompatActivity implements
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
         } else {
-            startLocationService();
-            Intent i = new Intent(this, MainActivity.class);
-            progressBar.setVisibility(View.GONE);
-            startActivity(i);
+            requestPermissionForBackgroundLocationTracking();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void requestPermissionForBackgroundLocationTracking(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, PERMISSION_ACCESS_BACKGROUND_LOCATION);
+        } else {
+            enterApplication();
         }
     }
 
@@ -247,10 +254,15 @@ public class LoginActivity extends AppCompatActivity implements
         switch (requestCode){
             case PERMISSION_ACCESS_FINE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    startLocationService();
-                    Intent i = new Intent(this, MainActivity.class);
+                    requestPermissionForBackgroundLocationTracking();
+                }else{
+                    _firebaseAuthClient.signOut();
                     progressBar.setVisibility(View.GONE);
-                    startActivity(i);
+                    Toast.makeText(LoginActivity.this, "You are signed out! If you want to use application you must grant location tracking!", Toast.LENGTH_SHORT).show();                }
+                return;
+            case PERMISSION_ACCESS_BACKGROUND_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    enterApplication();
                 }else{
                     _firebaseAuthClient.signOut();
                     progressBar.setVisibility(View.GONE);
@@ -267,5 +279,13 @@ public class LoginActivity extends AppCompatActivity implements
             }
         }
         return false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void enterApplication(){
+        startLocationService();
+        Intent i = new Intent(this, MainActivity.class);
+        progressBar.setVisibility(View.GONE);
+        startActivity(i);
     }
 }

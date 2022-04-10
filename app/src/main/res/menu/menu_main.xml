@@ -35,6 +35,11 @@
         android:title="@string/action_filter"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/action_services"
+        android:orderInCategory="100"
+        android:title="@string/action_services"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_singOut"
         android:orderInCategory="100"
         android:title="@string/action_singOut"

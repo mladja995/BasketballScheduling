@@ -119,4 +119,5 @@ public class LocationService extends Service {
                 .userRepository
                 .setLocationForCurrentUser(Double.toString(currentLocation.latitude), Double.toString(currentLocation.longitude));
     }
+
 }

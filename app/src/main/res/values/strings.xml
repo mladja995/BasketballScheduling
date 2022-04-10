@@ -55,4 +55,8 @@
     <string name="label_radius">Radius:</string>
     <string name="text_radius_hint">Expressed in kilometers</string>
     <string name="action_filter">Filter</string>
+    <string name="label_services">Services</string>
+    <string name="action_services">Services</string>
+    <string name="text_services_findEvent">Enable service for discovering events</string>
+    <string name="geofence_transition_invalid_type">Geofence unhandled transition type</string>
 </resources>

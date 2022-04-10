@@ -143,6 +143,11 @@ public class MainActivity extends AppCompatActivity implements
                 Intent i = new Intent(this, FilterActivity.class);
                 startActivity(i);
             }
+            else if (id == R.id.action_services)
+            {
+                Intent i = new Intent(this, ServicesActivity.class);
+                startActivity(i);
+            }
             return super.onOptionsItemSelected(item);
         }
         catch (Exception e)
