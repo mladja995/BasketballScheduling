@@ -2,21 +2,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="mosis.elfak.basketscheduling.activities.UserPendingFriendRequestsActivity">
-    <item
-        android:id="@+id/action_show_map"
-        android:orderInCategory="100"
-        android:title="@string/action_show_map"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_map_white"/>
-    <item
-        android:id="@+id/action_create_event"
-        android:orderInCategory="100"
-        android:title="@string/action_create_event"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_add_white"/>
-    <item
-        android:id="@+id/action_profile"
-        android:orderInCategory="100"
-        android:title="@string/action_profile"
-        app:showAsAction="never"/>
+
 </menu>

@@ -101,20 +101,7 @@ public class RankingsActivity extends AppCompatActivity implements UserRepositor
             // as you specify a parent activity in AndroidManifest.xml.
             int id = item.getItemId();
 
-            if (id == R.id.action_show_map)
-            {
-                Bundle stateBundle = new Bundle();
-                stateBundle.putInt("state", Constants.SHOW_MAP);
-                Intent i = new Intent(this, MapsActivity.class);
-                i.putExtras(stateBundle);
-                startActivity(i);
-            }
-            if (id == R.id.action_create_event)
-            {
-                Intent i = new Intent(this, CreateBasketballEventActivity.class);
-                startActivity(i);
-            }
-            else if (id == android.R.id.home)
+            if (id == android.R.id.home)
             {
                 finish();
             }

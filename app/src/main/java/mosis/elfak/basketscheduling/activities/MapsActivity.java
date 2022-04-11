@@ -215,6 +215,10 @@ public class MapsActivity extends AppCompatActivity implements
             {
                 Intent i = new Intent(this, FilterActivity.class);
                 startActivity(i);
+            }else if (id == R.id.action_events)
+            {
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
             }
         }
         return super.onOptionsItemSelected(item);
