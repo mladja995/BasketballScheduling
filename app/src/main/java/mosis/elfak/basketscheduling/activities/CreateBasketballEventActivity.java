@@ -34,6 +34,8 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
 import mosis.elfak.basketscheduling.R;
@@ -46,13 +48,14 @@ import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.FirebaseStorageClient;
 import mosis.elfak.basketscheduling.firebase.repository.BasketballEventRepository;
 
-// TODO: Add validation for dates entered in bad format
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class CreateBasketballEventActivity extends AppCompatActivity implements
         FirebaseStorageClient.ImageEventListener,
         BasketballEventRepository.UserBasketballEventListener{
 
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private static final String TAG = "CreateBasketballEvent";
+    private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
     private ActivityCreateBasketballEventBinding binding;
     private FirebaseServices _firebaseServices;
     private FirebaseAuthClient _firebaseAuthClient;
@@ -262,6 +265,7 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
                 .uploadEventImage(eventId, data, CreateBasketballEventActivity.class.getName());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean validateUserInput(){
         EditText etBeginsAt = findViewById(R.id.editText_create_basketball_event_begins_at);
         EditText etEndsOn = findViewById(R.id.editText_create_basketball_event_ends_on);
@@ -281,9 +285,26 @@ public class CreateBasketballEventActivity extends AppCompatActivity implements
             progressBar.setVisibility(View.GONE);
             createEventBtn.setEnabled(true);
             return false;
-        }else{
-            return true;
         }
+
+        if (!etBeginsAt.getText().toString().isEmpty()){
+            try{
+                LocalDateTime _date = LocalDateTime.parse(etBeginsAt.getText().toString(), dateTimeFormatter);
+            }catch (Exception e){
+                Toast.makeText(this, "Date is in wrong format!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        if (!etEndsOn.getText().toString().isEmpty()){
+            try{
+                LocalDateTime _date = LocalDateTime.parse(etEndsOn.getText().toString(), dateTimeFormatter);
+            }catch (Exception e){
+                Toast.makeText(this, "Date is in wrong format!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

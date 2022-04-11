@@ -148,6 +148,15 @@ public class MainActivity extends AppCompatActivity implements
                 Intent i = new Intent(this, ServicesActivity.class);
                 startActivity(i);
             }
+            else if (id == R.id.action_profile)
+            {
+                Intent i = new Intent(this, ViewUserProfileActivity.class);
+                Bundle positionBundle = new Bundle();
+                int position = _firebaseRealtimeDatabaseClient.userRepository.getUserIndex(_firebaseAuthClient.getAutheticatedUserId());
+                positionBundle.putInt("position", position);
+                i.putExtras(positionBundle);
+                startActivity(i);
+            }
             return super.onOptionsItemSelected(item);
         }
         catch (Exception e)

@@ -28,7 +28,6 @@ import mosis.elfak.basketscheduling.firebase.FirebaseAuthClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 
-// TODO: Implement profile calls for current user
 public class ViewUserProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ViewUserProfileActivity";
@@ -128,7 +127,7 @@ public class ViewUserProfileActivity extends AppCompatActivity {
     }
 
     private void _setContentView(){
-        if (isUserFriend()){
+        if (isUserFriend() || _user.getUserId().equals(_firebaseAuthClient.getAutheticatedUserId())){
             setContentView(R.layout.activity_view_user_profile);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_view_user_profile);
             setSupportActionBar(toolbar);
@@ -137,7 +136,7 @@ public class ViewUserProfileActivity extends AppCompatActivity {
             progressBar = findViewById(R.id.progressBar_view_user_profile);
             progressBar.setVisibility(View.GONE);
             initializeUserProfile();
-        }else{
+        } else{
             setContentView(R.layout.activity_view_user_profile_unknown);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_view_user_profile_unknown);
             setSupportActionBar(toolbar);

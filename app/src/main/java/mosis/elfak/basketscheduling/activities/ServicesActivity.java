@@ -31,11 +31,11 @@ import mosis.elfak.basketscheduling.contracts.Constants;
 import mosis.elfak.basketscheduling.databinding.ActivityServicesBinding;
 import mosis.elfak.basketscheduling.firebase.FirebaseRealtimeDatabaseClient;
 import mosis.elfak.basketscheduling.firebase.FirebaseServices;
+import mosis.elfak.basketscheduling.internals.ServicesStates;
 import mosis.elfak.basketscheduling.services.GeofenceBroadcastReceiver;
 import mosis.elfak.basketscheduling.services.LocationService;
 
 // TODO: Subscribe to and handle new basketball events
-// TODO: Implement singleton state for switch button
 public class ServicesActivity extends AppCompatActivity {
 
     private static final String TAG = "ServicesActivity";
@@ -59,6 +59,18 @@ public class ServicesActivity extends AppCompatActivity {
             initialize();
             initializeListeners();
         } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    protected  void onResume(){
+        try {
+            super.onResume();
+            if (ServicesStates.getInstance().getServiceState("DiscoverEventsService")) {
+                switchFindEventEnableDisable.setChecked(true);
+            }
+        } catch (Exception e){
             Log.e(TAG, e.getMessage());
         }
     }
@@ -105,6 +117,10 @@ public class ServicesActivity extends AppCompatActivity {
         switchFindEventEnableDisable = findViewById(R.id.switch_services_findEvent_enableDisable);
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceList = new ArrayList<Geofence>();
+
+        if (ServicesStates.getInstance().getServiceState("DiscoverEventsService")){
+            switchFindEventEnableDisable.setChecked(true);
+        }
     }
 
     private void initializeListeners() {
@@ -124,6 +140,7 @@ public class ServicesActivity extends AppCompatActivity {
         try {
             createGeofenceObjects();
             addGeofences();
+            ServicesStates.getInstance().registerServiceState("DiscoverEventsService", true);
         } catch (Exception e){
             Log.e(TAG, e.getMessage());
         }
@@ -165,13 +182,6 @@ public class ServicesActivity extends AppCompatActivity {
 
     private void addGeofences() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
@@ -194,6 +204,7 @@ public class ServicesActivity extends AppCompatActivity {
                 .addOnSuccessListener(this, new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        ServicesStates.getInstance().registerServiceState("DiscoverEventsService", false);
                         Log.i(TAG, "removeGeofences: success");
                     }
                 })
