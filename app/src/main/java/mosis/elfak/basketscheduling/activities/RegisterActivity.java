@@ -29,6 +29,7 @@ import mosis.elfak.basketscheduling.firebase.FirebaseServices;
 import mosis.elfak.basketscheduling.firebase.FirebaseStorageClient;
 import mosis.elfak.basketscheduling.firebase.repository.UserRepository;
 
+// TODO: Register Activity: Attempt to invoke virtual method 'boolean java.lang.String.equals(java.lang.Object)' on a null object reference
 public class RegisterActivity extends AppCompatActivity implements UserRepository.CurrentUserEventListener, FirebaseAuthClient.UserAuthenticationEventListener, FirebaseStorageClient.ImageEventListener {
 
     private ActivityResultLauncher<String> activityResultLauncher;

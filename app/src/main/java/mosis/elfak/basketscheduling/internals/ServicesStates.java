@@ -23,12 +23,7 @@ public class ServicesStates {
     }
 
     public void registerServiceState(String serviceName, Boolean state){
-        if (_servicesStates.containsKey(serviceName)){
-            Boolean _state = _servicesStates.get(serviceName);
-            _state = state;
-        }else{
-            _servicesStates.put(serviceName, state);
-        }
+        _servicesStates.put(serviceName, state);
     }
 
     public boolean getServiceState(String serviceName){

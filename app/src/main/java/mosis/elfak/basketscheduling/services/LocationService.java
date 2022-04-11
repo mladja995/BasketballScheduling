@@ -40,15 +40,6 @@ public class LocationService extends Service {
         initialize();
         initializeLocationListener();
         requestLocationUpdates();
-        /*new Thread(
-                new Runnable() {
-                    @RequiresApi(api = Build.VERSION_CODES.R)
-                    @Override
-                    public void run() {
-                        requestLocationUpdates();
-                    }
-                }
-        ).start();*/
 
         final String CHANNELID = "Location Foreground Service ID";
         NotificationChannel channel = new NotificationChannel(
